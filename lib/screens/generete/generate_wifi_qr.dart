@@ -1,36 +1,174 @@
 import 'dart:typed_data';
-
-import 'package:fluttercontactpicker/fluttercontactpicker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:flutter/material.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
-class QrGeneratePhone extends StatefulWidget {
-  QrGeneratePhone({key}) : super(key: key);
+class GenerateWifiQr extends StatefulWidget {
+  GenerateWifiQr({Key key}) : super(key: key);
 
   @override
-  _QrGeneratePhoneState createState() => _QrGeneratePhoneState();
+  _GenerateWifiQrState createState() => _GenerateWifiQrState();
 }
 
-class _QrGeneratePhoneState extends State<QrGeneratePhone> {
-  TextEditingController _inputController;
-
+class _GenerateWifiQrState extends State<GenerateWifiQr> {
+  TextEditingController _textEditingController;
+  TextEditingController _textEditingController2;
+  bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
-
   @override
   void initState() {
     super.initState();
-    _inputController = new TextEditingController();
+    _textEditingController = new TextEditingController();
+    _textEditingController2 = new TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff1D1F22),
-      body: _buildBody(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Wi-Fi"),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Container(
+              decoration: BoxDecoration(color: Color(0xff1D1F22)),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 15),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _qrCodeWidget(bytes, context),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: _buildTextField(),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      //**build generate button
+                      Material(
+                        color: Colors.white.withOpacity(0.0),
+                        child: Ink(
+                          color: Colors.white.withOpacity(0.0),
+                          child: InkWell(
+                            onTap: () {
+                              print(_textEditingController.text);
+                              if (_textEditingController.text != null &&
+                                  _textEditingController.text != "" &&
+                                  _textEditingController2.text != null &&
+                                  _textEditingController2.text != "") {
+                                _generateBarCode("WIFI:" +
+                                    _textEditingController.text +
+                                    ":" +
+                                    _textEditingController2.text);
+                              }
+                            },
+                            child: _buildGenerateButton(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future _generateBarCode(String inputCode) async {
+    Uint8List result = await scanner.generateBarCode(inputCode);
+    this.setState(() => this.bytes = result);
+  }
+
+  _buildGenerateButton() {
+    return Container(
+      width: 200,
+      height: 60,
+      decoration: BoxDecoration(
+          color: Color(0xff325CFD),
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+      child: Center(
+          child: Text(
+        "GENERATE QR",
+        style: TextStyle(
+            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+      )),
+    );
+  }
+
+  _buildTextField() {
+    return Padding(
+      padding: EdgeInsets.all(2),
+      child: Column(
+        children: [
+          TextField(
+            keyboardType: TextInputType.url,
+            textInputAction: TextInputAction.go,
+            cursorColor: Colors.white,
+            style: TextStyle(color: Colors.white),
+            controller: _textEditingController,
+            decoration: InputDecoration(
+              hintText: 'Wi-Fi Name',
+              hintStyle: TextStyle(color: Colors.grey),
+              labelText: 'Name',
+              labelStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          TextField(
+            keyboardType: TextInputType.url,
+            textInputAction: TextInputAction.go,
+            cursorColor: Colors.white,
+            style: TextStyle(color: Colors.white),
+            obscureText: isPasswordVisible,
+            controller: _textEditingController2,
+            decoration: InputDecoration(
+              suffixIcon: IconButton(
+                icon: isPasswordVisible
+                    ? Icon(
+                        Icons.visibility_off,
+                        color: Colors.white,
+                      )
+                    : Icon(Icons.visibility, color: Colors.white),
+                onPressed: () =>
+                    setState(() => isPasswordVisible = !isPasswordVisible),
+              ),
+              hintText: 'Wi-Fi Password',
+              hintStyle: TextStyle(color: Colors.grey),
+              labelText: 'Password',
+              labelStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -146,121 +284,6 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
           ],
         ),
       ),
-    );
-  }
-
-  Future _generateBarCode(String inputCode) async {
-    Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() => this.bytes = result);
-  }
-
-  Widget _buildTextField() {
-    return Stack(alignment: Alignment.centerRight, children: [
-      TextField(
-        onSubmitted: (value) {
-          _generateBarCode(value);
-        },
-        style: TextStyle(color: Colors.white),
-        controller: _inputController,
-        maxLines: 1,
-        keyboardType: TextInputType.phone,
-        textInputAction: TextInputAction.go,
-        cursorColor: Colors.white,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          prefixIcon: Icon(
-            Icons.phone,
-            color: Colors.white,
-          ),
-          hintText: '+90xxxxxxxxxx',
-          hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
-        ),
-      ),
-      Material(
-          color: Colors.white.withOpacity(0.0),
-          child: IconButton(
-            tooltip: 'Paste From Contact',
-            icon: Icon(
-              Icons.person_add,
-              color: Colors.white,
-            ),
-            onPressed: () async {
-              final granted = await FlutterContactPicker.requestPermission();
-              final PhoneContact contact =
-                  await FlutterContactPicker.pickPhoneContact();
-              setState(() {
-                _inputController.text = contact.phoneNumber.number;
-              });
-            },
-          )),
-    ]);
-  }
-
-  _buildGenerateButton() {
-    return Container(
-      width: 200,
-      height: 60,
-      decoration: BoxDecoration(
-          color: Color(0xff325CFD),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
-      child: Center(
-          child: Text(
-        "GENERATE QR",
-        style: TextStyle(
-            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
-      )),
-    );
-  }
-
-  _buildBody() {
-    return Column(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Container(
-            decoration: BoxDecoration(color: Color(0xff1D1F22)),
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _qrCodeWidget(bytes, context),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: _buildTextField(),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    //**build generate button
-                    Material(
-                      color: Colors.white.withOpacity(0.0),
-                      child: Ink(
-                        color: Colors.white.withOpacity(0.0),
-                        child: InkWell(
-                          onTap: () =>
-                              _generateBarCode(this._inputController.text),
-                          child: _buildGenerateButton(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-      ],
     );
   }
 

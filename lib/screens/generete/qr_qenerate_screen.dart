@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/screens/generete/generate_more_list.dart';
 import 'package:qr_scanner/screens/generete/generate_phone.dart';
 import 'package:qr_scanner/screens/generete/generete_url.dart';
-import 'package:qr_scanner/screens/qr_scan_screen.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
@@ -73,7 +73,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
           _buildBody(),
           QrGenerateUrl(),
           QrGeneratePhone(),
-          Container(),
+          GenerateMoreList(),
         ],
       ),
     );
@@ -146,14 +146,11 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                                 await Permission.storage.request();
                                 Map result = await ImageGallerySaver.saveImage(
                                     this.bytes);
-                                SnackBar snackBar;
                                 if (result['isSuccess']) {
-                                  snackBar =
-                                      new SnackBar(content: Text('Successful'));
-                                  Scaffold.of(context).showSnackBar(snackBar);
+                                  showAlertDialog(context, "Great", "Saved");
                                 } else {
-                                  snackBar = new SnackBar(
-                                      content: new Text('Save failed!'));
+                                  showAlertDialog(
+                                      context, "Error", "Save failed!");
                                 }
                               },
                               child: Center(
@@ -228,33 +225,51 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
     );
   }
 
-  TextField _buildTextField() {
-    return TextField(
-      onSubmitted: (value) {
-        _generateBarCode(value);
-      },
-      style: TextStyle(color: Colors.white),
-      controller: _inputController,
-      maxLines: 1,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.go,
-      cursorColor: Colors.white,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+  Widget _buildTextField() {
+    return Stack(alignment: Alignment.centerRight, children: [
+      TextField(
+        onSubmitted: (value) {
+          _generateBarCode(value);
+        },
+        style: TextStyle(color: Colors.white),
+        controller: _inputController,
+        maxLines: 1,
+        keyboardType: TextInputType.text,
+        textInputAction: TextInputAction.go,
+        cursorColor: Colors.white,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          prefixIcon: Icon(
+            Icons.text_fields,
+            color: Colors.white,
+          ),
+          hintText: 'Please Input Your Code',
+          hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        prefixIcon: Icon(
-          Icons.text_fields,
-          color: Colors.white,
-        ),
-        hintText: 'Please Input Your Code',
-        hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
       ),
-    );
+      Material(
+        color: Colors.white.withOpacity(0.0),
+        child: IconButton(
+          tooltip: 'Paste to ClipBoard',
+          icon: Icon(
+            Icons.paste,
+            color: Colors.white,
+          ),
+          onPressed: () async {
+            ClipboardData data = await Clipboard.getData('text/plain');
+            setState(() {
+              _inputController.text = data.text.toString();
+            });
+          },
+        ),
+      ),
+    ]);
   }
 
   _buildGenerateButton() {
@@ -316,6 +331,33 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
         ),
         SizedBox(height: 10),
       ],
+    );
+  }
+
+  showAlertDialog(BuildContext context, String title, String message) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

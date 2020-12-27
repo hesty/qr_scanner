@@ -103,12 +103,10 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                                     this.bytes);
                                 SnackBar snackBar;
                                 if (result['isSuccess']) {
-                                  snackBar =
-                                      new SnackBar(content: Text('Successful'));
-                                  Scaffold.of(context).showSnackBar(snackBar);
+                                  showAlertDialog(context, "Great", "Saved");
                                 } else {
-                                  snackBar = new SnackBar(
-                                      content: new Text('Save failed!'));
+                                  showAlertDialog(
+                                      context, "Error", "Save failed!");
                                 }
                               },
                               child: Center(
@@ -157,32 +155,53 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
     this.setState(() => this.bytes = result);
   }
 
-  TextField _buildTextField() {
-    return TextField(
-      onSubmitted: (value) {
-        _generateBarCode(value);
-      },
-      style: TextStyle(color: Colors.white),
-      controller: _inputController,
-      maxLines: 1,
-      keyboardType: TextInputType.url,
-      textInputAction: TextInputAction.go,
-      cursorColor: Colors.white,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+  Widget _buildTextField() {
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        TextField(
+          onSubmitted: (value) {
+            _generateBarCode(value);
+          },
+          style: TextStyle(color: Colors.white),
+          controller: _inputController,
+          maxLines: 1,
+          keyboardType: TextInputType.url,
+          textInputAction: TextInputAction.go,
+          cursorColor: Colors.white,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            prefixIcon: Icon(
+              Icons.link,
+              color: Colors.white,
+            ),
+            hintText: 'http://aaaa.example.com',
+            hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(10),
+        Material(
+          color: Colors.white.withOpacity(0.0),
+          child: IconButton(
+            tooltip: 'Paste to ClipBoard',
+            icon: Icon(
+              Icons.paste,
+              color: Colors.white,
+            ),
+            onPressed: () async {
+              ClipboardData data = await Clipboard.getData('text/plain');
+              setState(() {
+                _inputController.text = data.text.toString();
+              });
+            },
+          ),
         ),
-        prefixIcon: Icon(
-          Icons.link,
-          color: Colors.white,
-        ),
-        hintText: 'http://aaaa.example.com',
-        hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
-      ),
+      ],
     );
   }
 
@@ -245,6 +264,33 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
         ),
         SizedBox(height: 10),
       ],
+    );
+  }
+
+  showAlertDialog(BuildContext context, String title, String message) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

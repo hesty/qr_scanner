@@ -23,7 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  contact_picker: ^0.0.2
   custom_navigation_bar: ^0.6.0
   flutter_icons: ^1.1.0
   google_fonts: ^1.1.1
@@ -34,7 +33,8 @@ dependencies:
   share: ^0.6.5+4
   splashscreen: ^1.3.5
   wc_flutter_share: ^0.2.2
-  contacts_service: ^0.4.6
+  fluttercontactpicker: ^4.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
