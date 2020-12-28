@@ -1,29 +1,27 @@
 import 'dart:typed_data';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:flutter/material.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
-class GenerateEmailQr extends StatefulWidget {
-  GenerateEmailQr({Key key}) : super(key: key);
+class GenerateSmsQr extends StatefulWidget {
+  GenerateSmsQr({Key key}) : super(key: key);
 
   @override
-  _GenerateEmailQrState createState() => _GenerateEmailQrState();
+  _GenerateSmsQrState createState() => _GenerateSmsQrState();
 }
 
-class _GenerateEmailQrState extends State<GenerateEmailQr> {
+class _GenerateSmsQrState extends State<GenerateSmsQr> {
   TextEditingController _textEditingController;
   TextEditingController _textEditingController2;
-  TextEditingController _textEditingController3;
-  bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
   @override
   void initState() {
     super.initState();
     _textEditingController = new TextEditingController();
     _textEditingController2 = new TextEditingController();
-    _textEditingController3 = new TextEditingController();
   }
 
   @override
@@ -32,7 +30,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
       backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("E-Mail"),
+        title: Text("Sms"),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -67,15 +65,11 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                               if (_textEditingController.text != null &&
                                   _textEditingController.text != "" &&
                                   _textEditingController2.text != null &&
-                                  _textEditingController2.text != "" &&
-                                  _textEditingController3.text != null &&
-                                  _textEditingController3.text != "") {
-                                _generateBarCode("mailto:" +
+                                  _textEditingController2.text != "") {
+                                _generateBarCode("sms:" +
                                     _textEditingController.text +
-                                    "?subject=" +
-                                    _textEditingController2.text +
-                                    "&body=" +
-                                    _textEditingController3.text);
+                                    "?body=" +
+                                    _textEditingController2.text);
                               }
                             },
                             child: _buildGenerateButton(),
@@ -122,15 +116,31 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
       child: Column(
         children: [
           TextField(
-            keyboardType: TextInputType.url,
+            keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.go,
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white),
             controller: _textEditingController,
             decoration: InputDecoration(
-              hintText: 'E-Mail',
+              suffixIcon: IconButton(
+                tooltip: 'Paste From Contact',
+                icon: Icon(
+                  Icons.person_add,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  final granted =
+                      await FlutterContactPicker.requestPermission();
+                  final PhoneContact contact =
+                      await FlutterContactPicker.pickPhoneContact();
+                  setState(() {
+                    _textEditingController.text = contact.phoneNumber.number;
+                  });
+                },
+              ),
+              hintText: 'Number',
               hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Mail',
+              labelText: 'Number',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -144,38 +154,14 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
             height: 10.0,
           ),
           TextField(
-            keyboardType: TextInputType.url,
+            keyboardType: TextInputType.text,
+            maxLines: 5,
             textInputAction: TextInputAction.go,
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white),
-            obscureText: isPasswordVisible,
             controller: _textEditingController2,
             decoration: InputDecoration(
-              hintText: 'Subject',
-              hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Subject',
-              labelStyle: TextStyle(color: Colors.grey),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.white)),
-            ),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          TextField(
-            keyboardType: TextInputType.url,
-            textInputAction: TextInputAction.go,
-            cursorColor: Colors.white,
-            maxLines: 5,
-            style: TextStyle(color: Colors.white),
-            obscureText: isPasswordVisible,
-            controller: _textEditingController3,
-            decoration: InputDecoration(
-              hintText: 'Text',
+              hintText: 'Body',
               hintStyle: TextStyle(color: Colors.grey),
               labelText: 'Body',
               labelStyle: TextStyle(color: Colors.grey),
@@ -260,10 +246,10 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                                 Map result = await ImageGallerySaver.saveImage(
                                     this.bytes);
                                 if (result['isSuccess']) {
-                                  showAlertDialog(
-                                      context, "Save", "Successful");
+                                  showAlertDialog(context, "Great", "Saved");
                                 } else {
-                                  showAlertDialog(context, "Save", "Failed!");
+                                  showAlertDialog(
+                                      context, "Error", "Save failed!");
                                 }
                               },
                               child: Center(

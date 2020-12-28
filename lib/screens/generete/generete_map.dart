@@ -258,7 +258,6 @@ class _GenerateMapState extends State<GenerateMap> {
                                 await Permission.storage.request();
                                 Map result = await ImageGallerySaver.saveImage(
                                     this.bytes);
-                                SnackBar snackBar;
                                 if (result['isSuccess']) {
                                   showAlertDialog(
                                       context, "Save", "Successful");

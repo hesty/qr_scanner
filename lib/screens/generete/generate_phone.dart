@@ -168,11 +168,11 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
         cursorColor: Colors.white,
         decoration: InputDecoration(
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
           prefixIcon: Icon(
             Icons.phone,

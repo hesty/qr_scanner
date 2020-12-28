@@ -171,11 +171,11 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
           cursorColor: Colors.white,
           decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(5),
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(5),
             ),
             prefixIcon: Icon(
               Icons.link,
@@ -212,7 +212,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
       decoration: BoxDecoration(
           color: Color(0xff325CFD),
           borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+              topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
       child: Center(
           child: Text(
         "GENERATE QR",

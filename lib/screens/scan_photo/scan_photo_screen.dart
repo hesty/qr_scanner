@@ -6,11 +6,15 @@ import 'dart:typed_data';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/screens/scan_photo/scan_photo_deatil.dart';
+import 'package:qr_scanner/screens/scan_qr/show_scan_deatils.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
-import 'package:share/share.dart';
+
+import 'edit_photo.dart';
 
 class ScanPhotoScreen extends StatefulWidget {
-  ScanPhotoScreen({Key key}) : super(key: key);
+  File file;
+  ScanPhotoScreen({this.file});
 
   @override
   _ScanPhotoScreenState createState() => _ScanPhotoScreenState();
@@ -23,6 +27,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
   void initState() {
     super.initState();
     _outputController = new TextEditingController();
+    _scanPath();
   }
 
   @override
@@ -74,62 +79,39 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                             textInputAction: TextInputAction.go,
                             cursorColor: Colors.white,
                             decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(color: Colors.white)),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              suffixIcon: Column(
-                                children: [
-                                  Material(
-                                    color: Colors.white.withOpacity(0.0),
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.copy,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      onPressed: () {
-                                        if (_outputController.text != null &&
-                                            _outputController.text != "") {
-                                          Clipboard.setData(new ClipboardData(
-                                              text: _outputController.text));
-                                          showAlertDialog(context);
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  Material(
-                                    color: Colors.white.withOpacity(0.0),
-                                    child: IconButton(
-                                        splashColor: Colors.white,
-                                        icon: Icon(
-                                          Icons.share,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                        onPressed: () {
-                                          final RenderBox box =
-                                              context.findRenderObject();
-                                          if (_outputController.text != null &&
-                                              _outputController.text != "") {
-                                            Share.share(_outputController.text,
-                                                sharePositionOrigin:
-                                                    box.localToGlobal(
-                                                            Offset.zero) &
-                                                        box.size);
-                                          }
-                                        }),
-                                  ),
-                                ],
+                                borderRadius: BorderRadius.circular(5),
                               ),
                               prefixIcon: Icon(
                                 Icons.qr_code,
                                 color: Colors.white,
                               ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  Icons.more_vert,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  if (_outputController.text != null &&
+                                      _outputController.text != "") {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ScanPhotoDetail(
+                                                    _outputController.text)));
+                                  } else {
+                                    showAlertDialog(context);
+                                  }
+                                },
+                              ),
                               hintMaxLines: 3,
-                              hintText:
-                                  'The barcode or qrcode you scan will be displayed in this area.',
+                              hintText: 'Your Code will be Here.',
                               hintStyle:
-                                  TextStyle(fontSize: 15, color: Colors.white),
+                                  TextStyle(fontSize: 12, color: Colors.grey),
                             ),
                           ),
                         ),
@@ -140,7 +122,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                         Material(
                           color: Colors.white.withOpacity(0.0),
                           child: InkWell(
-                            onTap: _scanPhoto,
+                            onTap: getImage,
                             child: Container(
                               width: 200,
                               height: 60,
@@ -172,10 +154,32 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
         backgroundColor: Color(0xff1D1F22),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Color(0xff325CFD),
-          onPressed: () => _scanBytes(),
+          onPressed: () {
+            _scanBytes();
+          },
           tooltip: 'Take a Photo',
           child: const Icon(Icons.camera_alt_outlined),
         ));
+  }
+
+  File _image;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      Future.delayed(Duration(seconds: 0)).then(
+        (value) => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditPhotoScreen(arguments: [_image]),
+          ),
+        ),
+      );
+    }
   }
 
   showAlertDialog(BuildContext context) {
@@ -189,8 +193,8 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Great"),
-      content: Text("Copied to Clipboard"),
+      title: Text("Scan"),
+      content: Text("Scan Photo And Be HAPPY"),
       actions: [
         okButton,
       ],
@@ -213,11 +217,21 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
     this._outputController.text = barcode;
   }
 
-  Future _scanPhoto() async {
+  Future _scanPath() async {
+    int a = widget.file.toString().indexOf("'");
+    int b = widget.file.toString().lastIndexOf("jpg") + 3;
+    String path = widget.file.toString().substring(a + 1, b);
+
     await Permission.storage.request();
-    String barcode = await scanner.scanPhoto();
+    String barcode = await scanner.scanPath(path);
     setState(() {
-      this._outputController.text = barcode;
+      if (barcode != null) {
+        this._outputController.text = barcode;
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ScanPhotoDetail(_outputController.text)));
+      }
     });
   }
 }

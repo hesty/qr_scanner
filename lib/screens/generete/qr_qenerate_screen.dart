@@ -199,32 +199,6 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
     this.setState(() => this.bytes = result);
   }
 
-  Expanded _buildGenerateTitle() {
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.only(top: 1),
-        child: Center(
-          child: SafeArea(
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(15),
-                      bottomRight: Radius.circular(15))),
-              child: Text(
-                "Generate",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ),
-      ),
-      flex: 1,
-    );
-  }
-
   Widget _buildTextField() {
     return Stack(alignment: Alignment.centerRight, children: [
       TextField(
@@ -239,11 +213,11 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
         cursorColor: Colors.white,
         decoration: InputDecoration(
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
           ),
           prefixIcon: Icon(
             Icons.text_fields,

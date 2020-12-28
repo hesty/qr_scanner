@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:qr_scanner/screens/generete/qr_qenerate_screen.dart';
-import 'package:qr_scanner/screens/qr_scan_screen.dart';
-import 'package:qr_scanner/screens/scan_photo_screen.dart';
+import 'package:qr_scanner/screens/scan_photo/scan_photo_screen.dart';
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_scanner/screens/scan_qr/qr_scan_screen.dart';
 import 'package:qr_scanner/screens/splash_screen.dart';
 
 void main() {

@@ -100,7 +100,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
       decoration: BoxDecoration(
           color: Color(0xff325CFD),
           borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+              topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
       child: Center(
           child: Text(
         "GENERATE QR",
@@ -127,10 +127,10 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
               labelText: 'Name',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
               ),
               enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(5),
                   borderSide: BorderSide(color: Colors.white)),
             ),
           ),
