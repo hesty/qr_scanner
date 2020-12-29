@@ -1,3 +1,6 @@
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_scanner/screens/generete/qr_qenerate_screen.dart';
 import 'package:qr_scanner/screens/scan_photo/scan_photo_screen.dart';
@@ -6,7 +9,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_scanner/screens/scan_qr/qr_scan_screen.dart';
 import 'package:qr_scanner/screens/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseAdMob.instance
+      .initialize(appId: 'ca-app-pub-4694190778906605~5980739782');
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
   runApp(MyApp());
 }
 
@@ -37,6 +46,12 @@ class _HomaScreenState extends State<HomaScreen> {
     QrScanScreen(),
     ScanPhotoScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double dynmcH = MediaQuery.of(context).size.height * 0.01;

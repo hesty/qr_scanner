@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "106851263044",
+    "project_id": "qrscanner-6999d",
+    "storage_bucket": "qrscanner-6999d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106851263044:android:d66730d47ef2a494a19211",
+        "android_client_info": {
+          "package_name": "com.hesty.qr_scanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106851263044-355iu4t9tqbtaaku45t9tutt2u8hkjtd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD90eLybAoEljDdzZsP-FJ1scfyfAkISFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106851263044-355iu4t9tqbtaaku45t9tutt2u8hkjtd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-4694190778906605~9514991815"
+    }
+  ],
+  "configuration_version": "1"
+}

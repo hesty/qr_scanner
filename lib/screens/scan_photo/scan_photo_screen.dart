@@ -1,3 +1,4 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -7,14 +8,16 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_scanner/screens/scan_photo/scan_photo_deatil.dart';
-import 'package:qr_scanner/screens/scan_qr/show_scan_deatils.dart';
+import 'package:qr_scanner/services/adver_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'edit_photo.dart';
 
 class ScanPhotoScreen extends StatefulWidget {
   File file;
-  ScanPhotoScreen({this.file});
+  String sc;
+  ScanPhotoScreen({this.file, this.sc});
 
   @override
   _ScanPhotoScreenState createState() => _ScanPhotoScreenState();
@@ -26,8 +29,17 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
   @override
   void initState() {
     super.initState();
-    _outputController = new TextEditingController();
     _scanPath();
+    _outputController = new TextEditingController();
+  }
+
+  final AdvertService _advertService = new AdvertService();
+  Future adsk() async {
+    await Firebase.initializeApp();
+    FirebaseAdMob.instance.initialize(
+        appId: 'ca-app-pub-4694190778906605~5980739782',
+        analyticsEnabled: true);
+    _advertService.showIntesitial();
   }
 
   @override
@@ -102,7 +114,9 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 ScanPhotoDetail(
-                                                    _outputController.text)));
+                                                  result:
+                                                      _outputController.text,
+                                                )));
                                   } else {
                                     showAlertDialog(context);
                                   }
@@ -122,7 +136,10 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                         Material(
                           color: Colors.white.withOpacity(0.0),
                           child: InkWell(
-                            onTap: getImage,
+                            onTap: () async {
+                              await adsk();
+                              getImage();
+                            },
                             child: Container(
                               width: 200,
                               height: 60,
@@ -219,18 +236,21 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
 
   Future _scanPath() async {
     int a = widget.file.toString().indexOf("'");
-    int b = widget.file.toString().lastIndexOf("jpg") + 3;
-    String path = widget.file.toString().substring(a + 1, b);
+    int c = widget.file.toString().lastIndexOf(".") + 4;
+    String path = widget.file.toString().substring(a + 1, c);
 
     await Permission.storage.request();
     String barcode = await scanner.scanPath(path);
     setState(() {
       if (barcode != null) {
         this._outputController.text = barcode;
-        Navigator.push(
+
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => ScanPhotoDetail(_outputController.text)));
+                builder: (context) => ScanPhotoDetail(
+                      result: _outputController.text,
+                    )));
       }
     });
   }

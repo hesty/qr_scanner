@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_scanner/services/adver_service.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class ShowDeatilsScan extends StatefulWidget {
   final result;
@@ -12,6 +15,8 @@ class ShowDeatilsScan extends StatefulWidget {
 }
 
 class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
+  final ams = AdvertService();
+
   TextEditingController _outputController;
 
   String link = "";
@@ -26,7 +31,6 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
   void initState() {
     super.initState();
     _outputController = new TextEditingController();
-
     setState(() {
       _outputController.text = widget.result;
 
@@ -38,6 +42,16 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
         link = "Telephone Number";
       }
     });
+    adsk();
+  }
+
+  final AdvertService _advertService = new AdvertService();
+  Future adsk() async {
+    await Firebase.initializeApp();
+    FirebaseAdMob.instance.initialize(
+        appId: 'ca-app-pub-4694190778906605~5980739782',
+        analyticsEnabled: true);
+    _advertService.showBanner();
   }
 
   @override
@@ -219,7 +233,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

@@ -1,8 +1,11 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:qr_scanner/screens/generete/generate_sms_qr.dart';
 import 'package:qr_scanner/screens/generete/generate_wifi_qr.dart';
 import 'package:qr_scanner/screens/generete/generete_map.dart';
 import 'package:qr_scanner/screens/generete/qenerate_mail.dart';
+import 'package:qr_scanner/services/adver_service.dart';
 
 class GenerateMoreList extends StatefulWidget {
   GenerateMoreList({Key key}) : super(key: key);
@@ -12,6 +15,21 @@ class GenerateMoreList extends StatefulWidget {
 }
 
 class _GenerateMoreListState extends State<GenerateMoreList> {
+  final AdvertService _advertService = new AdvertService();
+  Future adsk() async {
+    await Firebase.initializeApp();
+    FirebaseAdMob.instance.initialize(
+        appId: 'ca-app-pub-4694190778906605~5980739782',
+        analyticsEnabled: true);
+    _advertService.showIntesitial();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    adsk();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

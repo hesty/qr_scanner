@@ -13,6 +13,12 @@
         android:label="Qr Scanner"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4694190778906605~9514991815"/>
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

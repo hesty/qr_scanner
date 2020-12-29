@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_scanner/screens/scan_qr/show_scan_deatils.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
-import 'package:share/share.dart';
 
 class QrScanScreen extends StatefulWidget {
   QrScanScreen({key}) : super(key: key);
@@ -14,6 +12,7 @@ class QrScanScreen extends StatefulWidget {
 
 class _QrScanScreenState extends State<QrScanScreen> {
   TextEditingController _outputController;
+
 
   @override
   void initState() {

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
+import 'package:qr_scanner/screens/scan_photo/scan_photo_deatil.dart';
 import 'package:qr_scanner/screens/scan_photo/scan_photo_screen.dart';
 
 class EditPhotoScreen extends StatefulWidget {
@@ -253,21 +254,17 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
     option.outputFormat = const OutputFormat.jpeg(100);
 
-    print(const JsonEncoder.withIndent('  ').convert(option.toJson()));
-
     final DateTime start = DateTime.now();
     final Uint8List result = await ImageEditor.editImage(
       image: img,
       imageEditorOption: option,
     );
 
-    print('result.length = ${result.length}');
-
     final Duration diff = DateTime.now().difference(start);
     image.writeAsBytesSync(result);
-    print('image_editor time : $diff');
+
     Future.delayed(Duration(seconds: 0)).then(
-      (value) => Navigator.push(
+      (value) => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => ScanPhotoScreen(

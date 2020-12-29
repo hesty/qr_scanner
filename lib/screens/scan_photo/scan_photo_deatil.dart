@@ -1,11 +1,18 @@
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/services/adver_service.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 
 class ScanPhotoDetail extends StatefulWidget {
   final result;
-  ScanPhotoDetail(this.result);
+  final file;
+
+  ScanPhotoDetail({this.result, this.file});
 
   @override
   _ScanPhotoDetailState createState() => _ScanPhotoDetailState();
@@ -21,12 +28,26 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final telNumberRegExp = new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
+  Future _scanPath() async {
+    int a = widget.file.toString().indexOf("'");
+    int c = widget.file.toString().lastIndexOf(".") + 4;
+    String path = widget.file.toString().substring(a + 1, c);
+    print("Deneme = " + c.toString());
+    await Permission.storage.request();
+    String barcode = await scanner.scanPath(path);
+    setState(() {
+      if (barcode != null) {
+        this._outputController.text = barcode;
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _outputController = new TextEditingController();
 
+    _outputController = new TextEditingController();
+    _scanPath();
     setState(() {
       _outputController.text = widget.result;
 
@@ -38,6 +59,21 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
         link = "Telephone Number";
       }
     });
+    adsk();
+  }
+
+  final AdvertService _advertService = new AdvertService();
+  Future adsk() async {
+    await Firebase.initializeApp();
+    FirebaseAdMob.instance.initialize(
+        appId: 'ca-app-pub-4694190778906605~5980739782',
+        analyticsEnabled: true);
+    _advertService.showBanner();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -219,7 +255,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

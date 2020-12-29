@@ -101,7 +101,6 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                                 await Permission.storage.request();
                                 Map result = await ImageGallerySaver.saveImage(
                                     this.bytes);
-                                SnackBar snackBar;
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, "Great", "Saved");
                                 } else {
