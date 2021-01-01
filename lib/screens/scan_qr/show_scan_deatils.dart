@@ -30,6 +30,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
   @override
   void initState() {
     super.initState();
+
     _outputController = new TextEditingController();
     setState(() {
       _outputController.text = widget.result;
@@ -43,6 +44,15 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
       }
     });
     adsk();
+    _advertService.showBannerBottom();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    setState(() {
+      _advertService.disposeAllAdverTop();
+    });
   }
 
   final AdvertService _advertService = new AdvertService();
@@ -51,7 +61,6 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
     FirebaseAdMob.instance.initialize(
         appId: 'ca-app-pub-4694190778906605~5980739782',
         analyticsEnabled: true);
-    _advertService.showBanner();
   }
 
   @override
@@ -233,6 +242,9 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
               ),
             ],
+          ),
+          Spacer(
+            flex: 1,
           ),
         ],
       ),

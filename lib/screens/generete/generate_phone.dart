@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/models/generate_history_model.dart';
+import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
@@ -24,6 +26,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   void initState() {
     super.initState();
     _inputController = new TextEditingController();
+    getHistory();
   }
 
   @override
@@ -127,7 +130,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
                               color: Color(0xff325CFD),
                             ),
                             onPressed: () async {
-                              if (!bytes.isEmpty) {
+                              if (bytes != null) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',
@@ -152,6 +155,28 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);
     this.setState(() => this.bytes = result);
+    AddDatabese();
+  }
+
+  DatabaseHelper _databaseHelper = DatabaseHelper();
+  void AddDatabese() async {
+    await _databaseHelper.insert(
+        GenerateHistoryModel("Phone", this._inputController.text, bytes));
+    setState(() {
+      getHistory();
+    });
+  }
+
+  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+
+    await historyFuture.then((data) {
+      setState(() {
+        this.allHistory = data;
+      });
+    });
   }
 
   Widget _buildTextField() {
@@ -191,7 +216,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
               color: Colors.white,
             ),
             onPressed: () async {
-              final granted = await FlutterContactPicker.requestPermission();
+              await FlutterContactPicker.requestPermission();
               final PhoneContact contact =
                   await FlutterContactPicker.pickPhoneContact();
               setState(() {

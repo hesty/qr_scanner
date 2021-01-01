@@ -2,6 +2,8 @@ import 'dart:typed_data';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/models/generate_history_model.dart';
+import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:flutter/material.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
@@ -27,70 +29,49 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1D1F22),
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Sms"),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Container(
-              decoration: BoxDecoration(color: Color(0xff1D1F22)),
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 15),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      _qrCodeWidget(bytes, context),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: _buildTextField(),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      //**build generate button
-                      Material(
-                        color: Colors.white.withOpacity(0.0),
-                        child: Ink(
-                          color: Colors.white.withOpacity(0.0),
-                          child: InkWell(
-                            onTap: () {
-                              print(_textEditingController.text);
-                              if (_textEditingController.text != null &&
-                                  _textEditingController.text != "" &&
-                                  _textEditingController2.text != null &&
-                                  _textEditingController2.text != "") {
-                                _generateBarCode("sms:" +
-                                    _textEditingController.text +
-                                    "?body=" +
-                                    _textEditingController2.text);
-                              }
-                            },
-                            child: _buildGenerateButton(),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+        backgroundColor: Color(0xff1D1F22),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("Sms"),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: _buildBody());
   }
 
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() => this.bytes = result);
+    this.setState(() {
+      this.bytes = result;
+      AddDatabese();
+    });
+  }
+
+  void AddDatabese() async {
+    await _databaseHelper.insert(GenerateHistoryModel(
+        "Sms",
+        "sms:" +
+            _textEditingController.text +
+            "?body=" +
+            _textEditingController2.text,
+        bytes));
+    setState(() {
+      getHistory();
+    });
+  }
+
+  DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+
+    await historyFuture.then((data) {
+      setState(() {
+        this.allHistory = data;
+      });
+    });
   }
 
   _buildGenerateButton() {
@@ -129,8 +110,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                   color: Colors.white,
                 ),
                 onPressed: () async {
-                  final granted =
-                      await FlutterContactPicker.requestPermission();
+                  await FlutterContactPicker.requestPermission();
                   final PhoneContact contact =
                       await FlutterContactPicker.pickPhoneContact();
                   setState(() {
@@ -271,7 +251,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                               color: Color(0xff325CFD),
                             ),
                             onPressed: () async {
-                              if (!bytes.isEmpty) {
+                              if (bytes != null) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',
@@ -317,6 +297,60 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
       builder: (BuildContext context) {
         return alert;
       },
+    );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      children: [
+        Expanded(
+          flex: 4,
+          child: Container(
+            decoration: BoxDecoration(color: Color(0xff1D1F22)),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 15),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _qrCodeWidget(bytes, context),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40),
+                      child: _buildTextField(),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    //**build generate button
+                    Material(
+                      color: Colors.white.withOpacity(0.0),
+                      child: Ink(
+                        color: Colors.white.withOpacity(0.0),
+                        child: InkWell(
+                          onTap: () {
+                            print(_textEditingController.text);
+                            if (_textEditingController.text != null &&
+                                _textEditingController.text != "" &&
+                                _textEditingController2.text != null &&
+                                _textEditingController2.text != "") {
+                              _generateBarCode("sms:" +
+                                  _textEditingController.text +
+                                  "?body=" +
+                                  _textEditingController2.text);
+                            }
+                          },
+                          child: _buildGenerateButton(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

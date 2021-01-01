@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/models/generate_history_model.dart';
+import 'package:qr_scanner/screens/generete/generate_history.dart';
 import 'package:qr_scanner/screens/generete/generate_more_list.dart';
 import 'package:qr_scanner/screens/generete/generate_phone.dart';
 import 'package:qr_scanner/screens/generete/generete_url.dart';
+import 'package:qr_scanner/services/adver_service.dart';
+import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
@@ -21,16 +25,32 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController _inputController;
 
-  Uint8List bytes = Uint8List(0);
+  DatabaseHelper _databaseHelper = DatabaseHelper();
 
+  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+
+    await historyFuture.then((data) {
+      setState(() {
+        this.allHistory = data;
+      });
+    });
+  }
+
+  Uint8List bytes = Uint8List(0);
+  final AdvertService _advertService = new AdvertService();
   TabController tabController;
 
   @override
   void initState() {
     super.initState();
     tabController = new TabController(vsync: this, initialIndex: 0, length: 4);
-
     _inputController = new TextEditingController();
+    _advertService.disposeAllAdverBottom();
+    _advertService.disposeAllAdverTop();
+    getHistory();
   }
 
   @override
@@ -43,6 +63,21 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
           style: TextStyle(
               color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+            tooltip: 'History',
+            icon: Icon(
+              Icons.history,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => GenerateHistory(allHistory)));
+            },
+          )
+        ],
         elevation: 0,
         // toolbarHeight: ,
         backgroundColor: Colors.transparent,
@@ -172,7 +207,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                               color: Color(0xff325CFD),
                             ),
                             onPressed: () async {
-                              if (!bytes.isEmpty) {
+                              if (bytes != null) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',
@@ -196,7 +231,19 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
 
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() => this.bytes = result);
+    //this.setState(() => this.bytes = result);
+    setState(() {
+      this.bytes = result;
+      AddDatabese();
+    });
+  }
+
+  void AddDatabese() async {
+    await _databaseHelper.insert(
+        GenerateHistoryModel("Text", this._inputController.text, bytes));
+    setState(() {
+      getHistory();
+    });
   }
 
   Widget _buildTextField() {
@@ -290,8 +337,9 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                       child: Ink(
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
-                          onTap: () =>
-                              _generateBarCode(this._inputController.text),
+                          onTap: () async {
+                            _generateBarCode(this._inputController.text);
+                          },
                           child: _buildGenerateButton(),
                         ),
                       ),

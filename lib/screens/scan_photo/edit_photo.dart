@@ -1,11 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
-import 'package:qr_scanner/screens/scan_photo/scan_photo_deatil.dart';
 import 'package:qr_scanner/screens/scan_photo/scan_photo_screen.dart';
+import 'package:qr_scanner/services/adver_service.dart';
 
 class EditPhotoScreen extends StatefulWidget {
   final List arguments;
@@ -17,6 +16,8 @@ class EditPhotoScreen extends StatefulWidget {
 class _EditPhotoScreenState extends State<EditPhotoScreen> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
+
+  final AdvertService _advertService = new AdvertService();
 
   double sat = 1;
   double bright = 0;
@@ -77,6 +78,10 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   void initState() {
     super.initState();
     image = widget.arguments[0];
+    setState(() {
+      _advertService.disposeAllAdverTop();
+      _advertService.disposeAllAdverBottom();
+    });
   }
 
   @override
@@ -263,15 +268,20 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     final Duration diff = DateTime.now().difference(start);
     image.writeAsBytesSync(result);
 
-    Future.delayed(Duration(seconds: 0)).then(
-      (value) => Navigator.pushReplacement(
+    Future.delayed(Duration(seconds: 0)).then((value) {
+      setState(() {
+        _advertService.disposeAllAdverBottom();
+        _advertService.disposeAllAdverTop();
+      });
+
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => ScanPhotoScreen(
                   file: image,
                 )),
-      ),
-    );
+      );
+    });
   }
 
   void flip() {

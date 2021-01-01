@@ -14,6 +14,7 @@ import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'edit_photo.dart';
 
+// ignore: must_be_immutable
 class ScanPhotoScreen extends StatefulWidget {
   File file;
   String sc;
@@ -31,6 +32,10 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
     super.initState();
     _scanPath();
     _outputController = new TextEditingController();
+    adsk();
+    _advertService.disposeAllAdverBottom();
+    _advertService.disposeAllAdverTop();
+    //_advertService.showBannerTop();
   }
 
   final AdvertService _advertService = new AdvertService();
@@ -39,7 +44,6 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
     FirebaseAdMob.instance.initialize(
         appId: 'ca-app-pub-4694190778906605~5980739782',
         analyticsEnabled: true);
-    _advertService.showIntesitial();
   }
 
   @override
@@ -57,12 +61,19 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                           borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(15),
                               bottomRight: Radius.circular(15))),
-                      child: Text(
-                        "Scan Photo",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 40,
+                          ),
+                          Text(
+                            "Scan Photo",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -80,7 +91,9 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Image.asset("assets/14.png"),
+                        Image.asset(
+                          "assets/14.png",
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 40),
                           child: TextField(

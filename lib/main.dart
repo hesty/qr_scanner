@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_scanner/screens/scan_qr/qr_scan_screen.dart';
 import 'package:qr_scanner/screens/splash_screen.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

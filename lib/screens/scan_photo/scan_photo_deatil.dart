@@ -45,7 +45,6 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   @override
   void initState() {
     super.initState();
-
     _outputController = new TextEditingController();
     _scanPath();
     setState(() {
@@ -58,8 +57,20 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
       } else if (_outputController.text.startsWith(telNumberRegExp)) {
         link = "Telephone Number";
       }
+
+      _advertService.disposeAllAdverBottom();
+      _advertService.disposeAllAdverTop();
     });
     adsk();
+
+    _advertService.showBannerBottom();
+  }
+
+  @override
+  void dispose() {
+    _advertService.disposeAllAdverBottom();
+    _advertService.disposeAllAdverTop();
+    super.dispose();
   }
 
   final AdvertService _advertService = new AdvertService();
@@ -68,12 +79,6 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
     FirebaseAdMob.instance.initialize(
         appId: 'ca-app-pub-4694190778906605~5980739782',
         analyticsEnabled: true);
-    _advertService.showBanner();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -86,177 +91,179 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: _outputController,
-              maxLines: 1,
-              cursorColor: Colors.white,
-              decoration: InputDecoration(
-                labelText: link,
-                labelStyle: TextStyle(color: Colors.white),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+      body: Center(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextFormField(
+                style: TextStyle(color: Colors.white),
+                controller: _outputController,
+                maxLines: 1,
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                  labelText: link,
+                  labelStyle: TextStyle(color: Colors.white),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  hintText: 'You scan will be displayed in this area.',
+                  hintStyle: TextStyle(fontSize: 15, color: Colors.white),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                hintText: 'You scan will be displayed in this area.',
-                hintStyle: TextStyle(fontSize: 15, color: Colors.white),
               ),
             ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 100,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Color(0xff325CFD),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    if (_outputController.text != null &&
-                        _outputController.text != "") {
-                      Clipboard.setData(
-                          new ClipboardData(text: _outputController.text));
-                      showAlertDialog(context);
-                    }
-                  },
-                  child: Center(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.copy,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        "Copy",
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ],
-                  )),
-                ),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Container(
-                width: 100,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Color(0xff325CFD),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    final RenderBox box = context.findRenderObject();
-                    if (_outputController.text != null &&
-                        _outputController.text != "") {
-                      Share.share(_outputController.text,
-                          sharePositionOrigin:
-                              box.localToGlobal(Offset.zero) & box.size);
-                    }
-                  },
-                  child: Center(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.share,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        "Share",
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ],
-                  )),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 100,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Color(0xff325CFD),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    launch(_outputController.text);
-                  },
-                  child: Center(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.launch,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        "Open with\nBrowser ",
-                        style: TextStyle(
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Color(0xff325CFD),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      if (_outputController.text != null &&
+                          _outputController.text != "") {
+                        Clipboard.setData(
+                            new ClipboardData(text: _outputController.text));
+                        showAlertDialog(context);
+                      }
+                    },
+                    child: Center(
+                        child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.copy,
                           color: Colors.white,
                         ),
-                      )
-                    ],
-                  )),
+                        Text(
+                          "Copy",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
+                    )),
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Container(
-                width: 100,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Color(0xff325CFD),
-                  borderRadius: BorderRadius.circular(5),
+                SizedBox(
+                  width: 10.0,
                 ),
-                child: InkWell(
-                  onTap: () {
-                    launch("https://www.google.com/search?q=" +
-                        _outputController.text);
-                  },
-                  child: Center(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        "Search",
-                        style: TextStyle(
+                Container(
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Color(0xff325CFD),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      final RenderBox box = context.findRenderObject();
+                      if (_outputController.text != null &&
+                          _outputController.text != "") {
+                        Share.share(_outputController.text,
+                            sharePositionOrigin:
+                                box.localToGlobal(Offset.zero) & box.size);
+                      }
+                    },
+                    child: Center(
+                        child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.share,
                           color: Colors.white,
                         ),
-                      )
-                    ],
-                  )),
+                        Text(
+                          "Share",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
+                    )),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Color(0xff325CFD),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      launch(_outputController.text);
+                    },
+                    child: Center(
+                        child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.launch,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "Open with\nBrowser ",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    )),
+                  ),
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+                Container(
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Color(0xff325CFD),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      launch("https://www.google.com/search?q=" +
+                          _outputController.text);
+                    },
+                    child: Center(
+                        child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "Search",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    )),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

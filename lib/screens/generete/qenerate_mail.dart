@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/models/generate_history_model.dart';
+import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:flutter/material.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
@@ -24,6 +26,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
     _textEditingController = new TextEditingController();
     _textEditingController2 = new TextEditingController();
     _textEditingController3 = new TextEditingController();
+    getHistory();
   }
 
   @override
@@ -96,7 +99,39 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
 
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() => this.bytes = result);
+    this.setState(() {
+      this.bytes = result;
+      AddDatabese();
+    });
+  }
+
+  void AddDatabese() async {
+    await _databaseHelper.insert(GenerateHistoryModel(
+        "E-Mail",
+        "mailto:" +
+            _textEditingController.text +
+            "?subject=" +
+            _textEditingController2.text +
+            "&body=" +
+            _textEditingController3.text,
+        bytes));
+    setState(() {
+      getHistory();
+    });
+  }
+
+  DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+
+    await historyFuture.then((data) {
+      setState(() {
+        this.allHistory = data;
+      });
+    });
   }
 
   _buildGenerateButton() {
@@ -285,7 +320,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                               color: Color(0xff325CFD),
                             ),
                             onPressed: () async {
-                              if (!bytes.isEmpty) {
+                              if (bytes != null) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',

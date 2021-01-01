@@ -1,6 +1,9 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_scanner/screens/scan_qr/show_scan_deatils.dart';
+import 'package:qr_scanner/services/adver_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 class QrScanScreen extends StatefulWidget {
@@ -13,11 +16,22 @@ class QrScanScreen extends StatefulWidget {
 class _QrScanScreenState extends State<QrScanScreen> {
   TextEditingController _outputController;
 
+  final AdvertService _advertService = new AdvertService();
+  Future adsk() async {
+    await Firebase.initializeApp();
+    FirebaseAdMob.instance.initialize(
+        appId: 'ca-app-pub-4694190778906605~5980739782',
+        analyticsEnabled: true);
+  }
 
   @override
   void initState() {
     super.initState();
     this._outputController = new TextEditingController();
+    adsk();
+    _advertService.disposeAllAdverBottom();
+    _advertService.disposeAllAdverTop();
+    _advertService.showBannerTop();
   }
 
   final key = new GlobalKey<ScaffoldState>();
@@ -26,16 +40,10 @@ class _QrScanScreenState extends State<QrScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            centerTitle: true,
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            title: Text(
-              "Scan QR",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold),
-            )),
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
         backgroundColor: Color(0xff1D1F22),
         body: Column(
           children: [
@@ -49,9 +57,16 @@ class _QrScanScreenState extends State<QrScanScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        Text(
+                          "Scan QR",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold),
+                        ),
                         Image.asset(
                           "assets/asa.png",
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          height: MediaQuery.of(context).size.height * 0.4,
                         ),
                         _buildOutTextField(),
                         SizedBox(
@@ -101,12 +116,22 @@ class _QrScanScreenState extends State<QrScanScreen> {
     if (barcode == null) {
       print('Nothing return.');
     } else {
-      setState(() {
+      setState(() async {
         this._outputController.text = barcode;
-        Navigator.push(
+        setState(() {
+          _advertService.disposeAllAdverTop();
+        });
+        await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ShowDeatilsScan(_outputController.text)));
+                builder: (context) =>
+                    ShowDeatilsScan(_outputController.text))).then((value) {
+          //_advertService.disposeAllAdverTop();
+          _advertService.showBannerTop();
+          setState(() {
+            _advertService.disposeAllAdverBottom();
+          });
+        });
       });
     }
   }
@@ -135,14 +160,23 @@ class _QrScanScreenState extends State<QrScanScreen> {
                     color: Colors.white,
                     size: 20,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_outputController.text != null &&
                         _outputController.text != "") {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ShowDeatilsScan(_outputController.text)));
+                      setState(() {
+                        _advertService.disposeAllAdverTop();
+                      });
+                      await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ShowDeatilsScan(_outputController.text)))
+                          .then((value) {
+                        _advertService.showBannerTop();
+                        setState(() {
+                          _advertService.disposeAllAdverBottom();
+                        });
+                      });
                     } else {
                       showAlertDialog(context);
                     }

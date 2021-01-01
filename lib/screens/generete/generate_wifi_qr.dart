@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/models/generate_history_model.dart';
+import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:flutter/material.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
@@ -22,6 +24,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
     super.initState();
     _textEditingController = new TextEditingController();
     _textEditingController2 = new TextEditingController();
+    getHistory();
   }
 
   @override
@@ -91,6 +94,33 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);
     this.setState(() => this.bytes = result);
+    AddDatabese();
+  }
+
+  DatabaseHelper _databaseHelper = DatabaseHelper();
+  void AddDatabese() async {
+    await _databaseHelper.insert(GenerateHistoryModel(
+        "Wi-Fi",
+        "WIFI:" +
+            _textEditingController.text +
+            ":" +
+            _textEditingController2.text,
+        bytes));
+    setState(() {
+      getHistory();
+    });
+  }
+
+  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+
+    await historyFuture.then((data) {
+      setState(() {
+        this.allHistory = data;
+      });
+    });
   }
 
   _buildGenerateButton() {
@@ -265,7 +295,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                               color: Color(0xff325CFD),
                             ),
                             onPressed: () async {
-                              if (!bytes.isEmpty) {
+                              if (bytes != null) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',

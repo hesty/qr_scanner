@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/models/generate_history_model.dart';
+import 'package:qr_scanner/services/adver_service.dart';
+import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
@@ -20,10 +23,14 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
 
   Uint8List bytes = Uint8List(0);
 
+  AdvertService _advertService = AdvertService();
+
   @override
   void initState() {
     super.initState();
     _inputController = new TextEditingController();
+    _advertService.showIntesitial();
+    getHistory();
   }
 
   @override
@@ -127,7 +134,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                               color: Color(0xff325CFD),
                             ),
                             onPressed: () async {
-                              if (!bytes.isEmpty) {
+                              if (bytes != null) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',
@@ -151,7 +158,32 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
 
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() => this.bytes = result);
+    this.setState(() {
+      this.bytes = result;
+      AddDatabese();
+    });
+  }
+
+  void AddDatabese() async {
+    await _databaseHelper
+        .insert(GenerateHistoryModel("Url", this._inputController.text, bytes));
+    setState(() {
+      getHistory();
+    });
+  }
+
+  DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+
+    await historyFuture.then((data) {
+      setState(() {
+        this.allHistory = data;
+      });
+    });
   }
 
   Widget _buildTextField() {
