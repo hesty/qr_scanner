@@ -1,6 +1,7 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/screens/scan_qr/scan_qr_history.dart';
 import 'package:qr_scanner/screens/scan_qr/show_scan_deatils.dart';
 import 'package:qr_scanner/services/adver_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -64,9 +65,14 @@ class _QrScanScreenState extends State<QrScanScreen> {
                               fontSize: 30,
                               fontWeight: FontWeight.bold),
                         ),
-                        Image.asset(
-                          "assets/asa.png",
-                          height: MediaQuery.of(context).size.height * 0.4,
+                        Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Image.asset(
+                              "assets/asa.png",
+                              height: MediaQuery.of(context).size.height * 0.4,
+                            ),
+                          ],
                         ),
                         _buildOutTextField(),
                         SizedBox(

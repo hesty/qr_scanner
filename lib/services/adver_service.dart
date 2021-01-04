@@ -13,7 +13,7 @@ class AdvertService {
   AdvertService._internal() {
     _targetingInfo = MobileAdTargetingInfo(
       testDevices: testDevice != null ? <String>[testDevice] : null,
-      nonPersonalizedAds: true,
+      //nonPersonalizedAds: true,
     );
   }
 
