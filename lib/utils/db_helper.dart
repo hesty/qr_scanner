@@ -41,16 +41,12 @@ class DatabaseHelper {
     Database db = await this.database;
     var result = await db.insert("$_generateTable", historyModel.toMap());
 
-    return await result;
+    return result;
   }
 
   Future<int> delete(int id) async {
     Database db = await this.database;
     var result = await db.rawDelete("delete from $_generateTable where id=$id");
     return result;
-  }
-
-  Future<int> query() {
-    return Future.value(1);
   }
 }
