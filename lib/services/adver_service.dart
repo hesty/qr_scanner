@@ -17,7 +17,7 @@ class AdvertService {
     );
   }
 
-  //'ca-app-pub-4694190778906605/8642578056',
+  
   showBannerBottom() {
     banner = BannerAd(
         adUnitId: 'ca-app-pub-4694190778906605/8642578056',
@@ -40,7 +40,7 @@ class AdvertService {
       ..show(anchorType: AnchorType.top, anchorOffset: 23);
   }
 
-//'ca-app-pub-4694190778906605/5989312798',
+
   showIntesitial() {
     interstitialAd = InterstitialAd(
         adUnitId: 'ca-app-pub-4694190778906605/5989312798',
