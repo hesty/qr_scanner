@@ -22,10 +22,9 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   TextEditingController _outputController;
 
   String link = '';
-  final urlRegExp =  RegExp(
-      r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
-  final emailRegExp =  RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final urlRegExp =
+      RegExp(r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
+  final emailRegExp = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
   Future _scanPath() async {
@@ -76,9 +75,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(
-        appId: 'ca-app-pub-4694190778906605~5980739782',
-        analyticsEnabled: true);
+    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~5980739782', analyticsEnabled: true);
   }
 
   @override
@@ -131,10 +128,8 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      if (_outputController.text != null &&
-                          _outputController.text != '') {
-                        Clipboard.setData(
-                            ClipboardData(text: _outputController.text));
+                      if (_outputController.text != null && _outputController.text != '') {
+                        Clipboard.setData(ClipboardData(text: _outputController.text));
                         showAlertDialog(context);
                       }
                     },
@@ -167,11 +162,8 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   child: InkWell(
                     onTap: () {
                       final RenderBox box = context.findRenderObject();
-                      if (_outputController.text != null &&
-                          _outputController.text != '') {
-                        Share.share(_outputController.text,
-                            sharePositionOrigin:
-                                box.localToGlobal(Offset.zero) & box.size);
+                      if (_outputController.text != null && _outputController.text != '') {
+                        Share.share(_outputController.text, sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
                       }
                     },
                     child: Center(
@@ -239,8 +231,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      launch('https://www.google.com/search?q=' +
-                          _outputController.text);
+                      launch('https://www.google.com/search?q=' + _outputController.text);
                     },
                     child: Center(
                         child: Row(
