@@ -18,8 +18,7 @@ class _SplashScrenState extends State<SplashScren> {
         navigateAfterSeconds: HomaScreen(),
         title: Text(
           'QR & Barcode Reader',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 30.0, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30.0, color: Colors.white),
         ),
         image: Image.asset('assets/16.png'),
         backgroundColor: Color(0xff1D1F22),

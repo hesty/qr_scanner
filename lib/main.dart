@@ -54,6 +54,7 @@ class _HomaScreenState extends State<HomaScreen> {
   @override
   Widget build(BuildContext context) {
     var dynmcH = MediaQuery.of(context).size.height * 0.01;
+
     return Scaffold(
       backgroundColor: Color(0xff1D1F22),
       body: children[_currentIndex],
