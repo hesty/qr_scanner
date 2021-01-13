@@ -25,29 +25,29 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController _inputController;
 
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
 
     await historyFuture.then((data) {
       setState(() {
-        this.allHistory = data;
+        allHistory = data;
       });
     });
   }
 
   Uint8List bytes = Uint8List(0);
-  final AdvertService _advertService = new AdvertService();
+  final AdvertService _advertService = AdvertService();
   TabController tabController;
 
   @override
   void initState() {
     super.initState();
-    tabController = new TabController(vsync: this, initialIndex: 0, length: 4);
-    _inputController = new TextEditingController();
+    tabController = TabController(vsync: this, initialIndex: 0, length: 4);
+    _inputController =  TextEditingController();
     _advertService.disposeAllAdverBottom();
     _advertService.disposeAllAdverTop();
     getHistory();
@@ -59,7 +59,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Generate",
+          'Generate',
           style: TextStyle(
               color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
         ),
@@ -87,10 +87,10 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
           indicatorColor: Color(0xff325CFD),
           tabs: [
             Tab(
-              text: "Text",
+              text: 'Text',
             ),
             Tab(
-              text: "Url",
+              text: 'Url',
             ),
             Tab(
               text: 'Phone',
@@ -164,8 +164,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => this
-                                  .setState(() => this.bytes = Uint8List(0)),
+                              onTap: () => setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
@@ -182,10 +181,10 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                                 Map result = await ImageGallerySaver.saveImage(
                                     this.bytes);
                                 if (result['isSuccess']) {
-                                  showAlertDialog(context, "Great", "Saved");
+                                  showAlertDialog(context, 'Great', 'Saved');
                                 } else {
                                   showAlertDialog(
-                                      context, "Error", "Save failed!");
+                                      context, 'Error', 'Save failed!');
                                 }
                               },
                               child: Center(
@@ -230,17 +229,17 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
   }
 
   Future _generateBarCode(String inputCode) async {
-    Uint8List result = await scanner.generateBarCode(inputCode);
+    var result = await scanner.generateBarCode(inputCode);
     //this.setState(() => this.bytes = result);
     setState(() {
-      this.bytes = result;
+      bytes = result;
       AddDatabese();
     });
   }
 
   void AddDatabese() async {
     await _databaseHelper.insert(
-        GenerateHistoryModel("Text", this._inputController.text, bytes));
+        GenerateHistoryModel('Text', _inputController.text, bytes));
     setState(() {
       getHistory();
     });
@@ -283,7 +282,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
             color: Colors.white,
           ),
           onPressed: () async {
-            ClipboardData data = await Clipboard.getData('text/plain');
+            var data = await Clipboard.getData('text/plain');
             setState(() {
               _inputController.text = data.text.toString();
             });
@@ -293,7 +292,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
     ]);
   }
 
-  _buildGenerateButton() {
+  Container _buildGenerateButton() {
     return Container(
       width: 200,
       height: 60,
@@ -303,14 +302,14 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
               topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
       child: Center(
           child: Text(
-        "GENERATE QR",
+        'GENERATE QR',
         style: TextStyle(
             color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
       )),
     );
   }
 
-  _buildBody() {
+  Column _buildBody() {
     return Column(
       children: [
         Expanded(
@@ -338,7 +337,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
                           onTap: () async {
-                            _generateBarCode(this._inputController.text);
+                            await _generateBarCode(_inputController.text);
                           },
                           child: _buildGenerateButton(),
                         ),
@@ -356,17 +355,18 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context, String title, String message) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
+    var alert = AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [

@@ -22,8 +22,8 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
   @override
   void initState() {
     super.initState();
-    _textEditingController = new TextEditingController();
-    _textEditingController2 = new TextEditingController();
+    _textEditingController = TextEditingController();
+    _textEditingController2 = TextEditingController();
   }
 
   @override
@@ -32,7 +32,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
         backgroundColor: Color(0xff1D1F22),
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Sms"),
+          title: Text('Sms'),
           elevation: 0,
           backgroundColor: Colors.transparent,
         ),
@@ -40,19 +40,19 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
   }
 
   Future _generateBarCode(String inputCode) async {
-    Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() {
-      this.bytes = result;
+    var result = await scanner.generateBarCode(inputCode);
+    setState(() {
+      bytes = result;
       AddDatabese();
     });
   }
 
   void AddDatabese() async {
     await _databaseHelper.insert(GenerateHistoryModel(
-        "Sms",
-        "sms:" +
+        'Sms',
+        'sms:' +
             _textEditingController.text +
-            "?body=" +
+            '?body=' +
             _textEditingController2.text,
         bytes));
     setState(() {
@@ -60,21 +60,21 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
     });
   }
 
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
 
     await historyFuture.then((data) {
       setState(() {
-        this.allHistory = data;
+        allHistory = data;
       });
     });
   }
 
-  _buildGenerateButton() {
+  Container _buildGenerateButton() {
     return Container(
       width: 200,
       height: 60,
@@ -84,14 +84,14 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
               topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
       child: Center(
           child: Text(
-        "GENERATE QR",
+        'GENERATE QR',
         style: TextStyle(
             color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
       )),
     );
   }
 
-  _buildTextField() {
+  Padding _buildTextField() {
     return Padding(
       padding: EdgeInsets.all(2),
       child: Column(
@@ -111,7 +111,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                 ),
                 onPressed: () async {
                   await FlutterContactPicker.requestPermission();
-                  final PhoneContact contact =
+                  final contact =
                       await FlutterContactPicker.pickPhoneContact();
                   setState(() {
                     _textEditingController.text = contact.phoneNumber.number;
@@ -208,8 +208,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => this
-                                  .setState(() => this.bytes = Uint8List(0)),
+                              onTap: () => setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
@@ -226,10 +225,10 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                                 Map result = await ImageGallerySaver.saveImage(
                                     this.bytes);
                                 if (result['isSuccess']) {
-                                  showAlertDialog(context, "Great", "Saved");
+                                  showAlertDialog(context, 'Great', 'Saved');
                                 } else {
                                   showAlertDialog(
-                                      context, "Error", "Save failed!");
+                                      context, 'Error', 'Save failed!');
                                 }
                               },
                               child: Center(
@@ -273,17 +272,18 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context, String title, String message) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
+    var alert = AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [
@@ -330,12 +330,12 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                           onTap: () {
                             print(_textEditingController.text);
                             if (_textEditingController.text != null &&
-                                _textEditingController.text != "" &&
+                                _textEditingController.text != '' &&
                                 _textEditingController2.text != null &&
-                                _textEditingController2.text != "") {
-                              _generateBarCode("sms:" +
+                                _textEditingController2.text != '') {
+                              _generateBarCode('sms:' +
                                   _textEditingController.text +
-                                  "?body=" +
+                                  '?body=' +
                                   _textEditingController2.text);
                             }
                           },

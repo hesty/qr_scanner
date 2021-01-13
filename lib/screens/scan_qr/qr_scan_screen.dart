@@ -17,10 +17,10 @@ class QrScanScreen extends StatefulWidget {
 class _QrScanScreenState extends State<QrScanScreen> {
   TextEditingController _outputController;
 
-  final AdvertService _advertService = new AdvertService();
+  final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    FirebaseAdMob.instance.initialize(
+    await FirebaseAdMob.instance.initialize(
         appId: 'ca-app-pub-4694190778906605~5980739782',
         analyticsEnabled: true);
   }
@@ -28,14 +28,14 @@ class _QrScanScreenState extends State<QrScanScreen> {
   @override
   void initState() {
     super.initState();
-    this._outputController = new TextEditingController();
+    _outputController = TextEditingController();
     adsk();
     _advertService.disposeAllAdverBottom();
     _advertService.disposeAllAdverTop();
     _advertService.showBannerTop();
   }
 
-  final key = new GlobalKey<ScaffoldState>();
+  final key = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          "Scan QR",
+                          'Scan QR',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 30,
@@ -69,7 +69,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                           alignment: Alignment.topRight,
                           children: [
                             Image.asset(
-                              "assets/asa.png",
+                              'assets/asa.png',
                               height: MediaQuery.of(context).size.height * 0.4,
                             ),
                             Material(
@@ -115,7 +115,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                                       bottomLeft: Radius.circular(15))),
                               child: Center(
                                   child: Text(
-                                "SCAN QR",
+                                'SCAN QR',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 25,
@@ -140,12 +140,12 @@ class _QrScanScreenState extends State<QrScanScreen> {
 
   Future _scan() async {
     await Permission.camera.request();
-    String barcode = await scanner.scan();
+    var barcode = await scanner.scan();
     if (barcode == null) {
       print('Nothing return.');
     } else {
       setState(() async {
-        this._outputController.text = barcode;
+        _outputController.text = barcode;
         setState(() {
           _advertService.disposeAllAdverTop();
         });
@@ -190,7 +190,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                   ),
                   onPressed: () async {
                     if (_outputController.text != null &&
-                        _outputController.text != "") {
+                        _outputController.text != '') {
                       setState(() {
                         _advertService.disposeAllAdverTop();
                       });
@@ -228,19 +228,20 @@ class _QrScanScreenState extends State<QrScanScreen> {
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Scan"),
-      content: Text("Scan QR And Be HAPPY"),
+    var alert = AlertDialog(
+      title: Text('Scan'),
+      content: Text('Scan QR And Be HAPPY'),
       actions: [
         okButton,
       ],

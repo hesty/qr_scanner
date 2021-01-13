@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -31,17 +30,17 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
   void initState() {
     super.initState();
     _scanPath();
-    _outputController = new TextEditingController();
+    _outputController = TextEditingController();
     adsk();
     _advertService.disposeAllAdverBottom();
     _advertService.disposeAllAdverTop();
     //_advertService.showBannerTop();
   }
 
-  final AdvertService _advertService = new AdvertService();
+  final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    FirebaseAdMob.instance.initialize(
+    await FirebaseAdMob.instance.initialize(
         appId: 'ca-app-pub-4694190778906605~5980739782',
         analyticsEnabled: true);
   }
@@ -67,7 +66,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                             height: 40,
                           ),
                           Text(
-                            "Scan Photo",
+                            'Scan Photo',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 30,
@@ -92,7 +91,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Image.asset(
-                          "assets/14.png",
+                          'assets/14.png',
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 40),
@@ -121,7 +120,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                                 ),
                                 onPressed: () {
                                   if (_outputController.text != null &&
-                                      _outputController.text != "") {
+                                      _outputController.text != '') {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -151,7 +150,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                           child: InkWell(
                             onTap: () async {
                               await adsk();
-                              getImage();
+                              await getImage();
                             },
                             child: Container(
                               width: 200,
@@ -163,7 +162,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                                       bottomLeft: Radius.circular(15))),
                               child: Center(
                                   child: Text(
-                                "SCAN PHOTO",
+                                'SCAN PHOTO',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 25,
@@ -201,7 +200,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
       setState(() {
         _image = File(pickedFile.path);
       });
-      Future.delayed(Duration(seconds: 0)).then(
+      await Future.delayed(Duration(seconds: 0)).then(
         (value) => Navigator.push(
           context,
           MaterialPageRoute(
@@ -212,19 +211,20 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
     }
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Scan"),
-      content: Text("Scan Photo And Be HAPPY"),
+    var alert = AlertDialog(
+      title: Text('Scan'),
+      content: Text('Scan Photo And Be HAPPY'),
       actions: [
         okButton,
       ],
@@ -240,23 +240,24 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
   }
 
   Future _scanBytes() async {
-    File file = await ImagePicker.pickImage(source: ImageSource.camera);
+    // ignore: deprecated_member_use
+    var file = await ImagePicker.pickImage(source: ImageSource.camera);
     if (file == null) return;
-    Uint8List bytes = file.readAsBytesSync();
-    String barcode = await scanner.scanBytes(bytes);
-    this._outputController.text = barcode;
+    var bytes = file.readAsBytesSync();
+    var barcode = await scanner.scanBytes(bytes);
+    _outputController.text = barcode;
   }
 
   Future _scanPath() async {
-    int a = widget.file.toString().indexOf("'");
-    int c = widget.file.toString().lastIndexOf(".") + 4;
-    String path = widget.file.toString().substring(a + 1, c);
+    var a = widget.file.toString().indexOf("'");
+    var c = widget.file.toString().lastIndexOf('.') + 4;
+    var path = widget.file.toString().substring(a + 1, c);
 
     await Permission.storage.request();
-    String barcode = await scanner.scanPath(path);
+    var barcode = await scanner.scanPath(path);
     setState(() {
       if (barcode != null) {
-        this._outputController.text = barcode;
+        _outputController.text = barcode;
 
         Navigator.pushReplacement(
             context,

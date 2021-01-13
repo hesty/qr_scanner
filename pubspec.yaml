@@ -23,7 +23,7 @@ dependencies:
   image_editor: ^0.7.3
   image_gallery_saver: ^1.6.7
   image_picker: ^0.6.7+4
-  path: 
+  path: null
   permission_handler: ^5.0.1+1
   photo_view: ^0.9.2
   qrscan: ^0.2.21
@@ -37,7 +37,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.8.0
-
+  pedantic: ^1.9.2
 flutter_icons:
   android: true
   ios: true

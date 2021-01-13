@@ -12,8 +12,7 @@ import 'package:qr_scanner/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseAdMob.instance
-      .initialize(appId: 'ca-app-pub-4694190778906605~5980739782');
+  await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~5980739782');
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   runApp(MyApp());
@@ -54,7 +53,7 @@ class _HomaScreenState extends State<HomaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double dynmcH = MediaQuery.of(context).size.height * 0.01;
+    var dynmcH = MediaQuery.of(context).size.height * 0.01;
     return Scaffold(
       backgroundColor: Color(0xff1D1F22),
       body: children[_currentIndex],

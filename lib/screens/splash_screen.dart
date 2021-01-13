@@ -13,17 +13,17 @@ class SplashScren extends StatefulWidget {
 class _SplashScrenState extends State<SplashScren> {
   @override
   Widget build(BuildContext context) {
-    return new SplashScreen(
+    return SplashScreen(
         seconds: 5,
-        navigateAfterSeconds: new HomaScreen(),
-        title: new Text(
+        navigateAfterSeconds: HomaScreen(),
+        title: Text(
           'QR & Barcode Reader',
-          style: new TextStyle(
+          style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 30.0, color: Colors.white),
         ),
-        image: Image.asset("assets/16.png"),
+        image: Image.asset('assets/16.png'),
         backgroundColor: Color(0xff1D1F22),
-        styleTextUnderTheLoader: new TextStyle(),
+        styleTextUnderTheLoader: TextStyle(),
         photoSize: 100.0,
         loaderColor: Color(0xff325CFD));
   }

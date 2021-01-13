@@ -21,23 +21,23 @@ class ScanPhotoDetail extends StatefulWidget {
 class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   TextEditingController _outputController;
 
-  String link = "";
-  final urlRegExp = new RegExp(
-      r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
-  final emailRegExp = new RegExp(
+  String link = '';
+  final urlRegExp =  RegExp(
+      r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
+  final emailRegExp =  RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-  final telNumberRegExp = new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
+  final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
   Future _scanPath() async {
-    int a = widget.file.toString().indexOf("'");
-    int c = widget.file.toString().lastIndexOf(".") + 4;
-    String path = widget.file.toString().substring(a + 1, c);
-    print("Deneme = " + c.toString());
+    var a = widget.file.toString().indexOf("'");
+    var c = widget.file.toString().lastIndexOf('.') + 4;
+    var path = widget.file.toString().substring(a + 1, c);
+    print('Deneme = ' + c.toString());
     await Permission.storage.request();
-    String barcode = await scanner.scanPath(path);
+    var barcode = await scanner.scanPath(path);
     setState(() {
       if (barcode != null) {
-        this._outputController.text = barcode;
+        _outputController.text = barcode;
       }
     });
   }
@@ -45,17 +45,17 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   @override
   void initState() {
     super.initState();
-    _outputController = new TextEditingController();
+    _outputController = TextEditingController();
     _scanPath();
     setState(() {
       _outputController.text = widget.result;
 
       if (_outputController.text.startsWith(urlRegExp)) {
-        link = "Url";
+        link = 'Url';
       } else if (_outputController.text.startsWith(emailRegExp)) {
-        link = "E-Mail";
+        link = 'E-Mail';
       } else if (_outputController.text.startsWith(telNumberRegExp)) {
-        link = "Telephone Number";
+        link = 'Telephone Number';
       }
 
       _advertService.disposeAllAdverBottom();
@@ -73,10 +73,10 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
     super.dispose();
   }
 
-  final AdvertService _advertService = new AdvertService();
+  final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    FirebaseAdMob.instance.initialize(
+    await FirebaseAdMob.instance.initialize(
         appId: 'ca-app-pub-4694190778906605~5980739782',
         analyticsEnabled: true);
   }
@@ -87,7 +87,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
       backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Show Details"),
+        title: Text('Show Details'),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -132,9 +132,9 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   child: InkWell(
                     onTap: () {
                       if (_outputController.text != null &&
-                          _outputController.text != "") {
+                          _outputController.text != '') {
                         Clipboard.setData(
-                            new ClipboardData(text: _outputController.text));
+                            ClipboardData(text: _outputController.text));
                         showAlertDialog(context);
                       }
                     },
@@ -147,7 +147,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                           color: Colors.white,
                         ),
                         Text(
-                          "Copy",
+                          'Copy',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
@@ -168,7 +168,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                     onTap: () {
                       final RenderBox box = context.findRenderObject();
                       if (_outputController.text != null &&
-                          _outputController.text != "") {
+                          _outputController.text != '') {
                         Share.share(_outputController.text,
                             sharePositionOrigin:
                                 box.localToGlobal(Offset.zero) & box.size);
@@ -183,7 +183,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                           color: Colors.white,
                         ),
                         Text(
-                          "Share",
+                          'Share',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
@@ -218,7 +218,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                           color: Colors.white,
                         ),
                         Text(
-                          "Open with\nBrowser ",
+                          'Open with\nBrowser ',
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -239,7 +239,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      launch("https://www.google.com/search?q=" +
+                      launch('https://www.google.com/search?q=' +
                           _outputController.text);
                     },
                     child: Center(
@@ -251,7 +251,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                           color: Colors.white,
                         ),
                         Text(
-                          "Search",
+                          'Search',
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -268,19 +268,20 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Great"),
-      content: Text("Copied to Clipboard"),
+    var alert = AlertDialog(
+      title: Text('Great'),
+      content: Text('Copied to Clipboard'),
       actions: [
         okButton,
       ],

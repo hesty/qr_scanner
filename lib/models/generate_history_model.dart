@@ -10,7 +10,7 @@ class GenerateHistoryModel {
   GenerateHistoryModel.withId(this.id, this.type, this.text, this.photo);
 
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    var map = <String, dynamic>{};
     map['id'] = id;
     map['type'] = type;
     map['text'] = text;
@@ -20,9 +20,9 @@ class GenerateHistoryModel {
   }
 
   GenerateHistoryModel.fromMap(Map<String, dynamic> map) {
-    this.id = map['id'];
-    this.type = map['type'];
-    this.text = map['text'];
-    this.photo = map['photo'];
+    id = map['id'];
+    type = map['type'];
+    text = map['text'];
+    photo = map['photo'];
   }
 }

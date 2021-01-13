@@ -22,8 +22,8 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
   @override
   void initState() {
     super.initState();
-    _textEditingController = new TextEditingController();
-    _textEditingController2 = new TextEditingController();
+    _textEditingController = TextEditingController();
+    _textEditingController2 = TextEditingController();
     getHistory();
   }
 
@@ -33,7 +33,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
       backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Wi-Fi"),
+        title: Text('Wi-Fi'),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -66,13 +66,10 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                             onTap: () {
                               print(_textEditingController.text);
                               if (_textEditingController.text != null &&
-                                  _textEditingController.text != "" &&
+                                  _textEditingController.text != '' &&
                                   _textEditingController2.text != null &&
-                                  _textEditingController2.text != "") {
-                                _generateBarCode("WIFI:" +
-                                    _textEditingController.text +
-                                    ":" +
-                                    _textEditingController2.text);
+                                  _textEditingController2.text != '') {
+                                _generateBarCode('WIFI:' + _textEditingController.text + ':' + _textEditingController2.text);
                               }
                             },
                             child: _buildGenerateButton(),
@@ -92,55 +89,46 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
   }
 
   Future _generateBarCode(String inputCode) async {
-    Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() => this.bytes = result);
+    final result = await scanner.generateBarCode(inputCode);
+    setState(() => bytes = result);
     AddDatabese();
   }
 
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final _databaseHelper = DatabaseHelper();
   void AddDatabese() async {
-    await _databaseHelper.insert(GenerateHistoryModel(
-        "Wi-Fi",
-        "WIFI:" +
-            _textEditingController.text +
-            ":" +
-            _textEditingController2.text,
-        bytes));
+    await _databaseHelper.insert(GenerateHistoryModel('Wi-Fi', 'WIFI:' + _textEditingController.text + ':' + _textEditingController2.text, bytes));
     setState(() {
       getHistory();
     });
   }
 
-  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
 
     await historyFuture.then((data) {
       setState(() {
-        this.allHistory = data;
+        allHistory = data;
       });
     });
   }
 
-  _buildGenerateButton() {
+  Container _buildGenerateButton() {
     return Container(
       width: 200,
       height: 60,
-      decoration: BoxDecoration(
-          color: Color(0xff325CFD),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
+      decoration:
+          BoxDecoration(color: Color(0xff325CFD), borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
       child: Center(
           child: Text(
-        "GENERATE QR",
-        style: TextStyle(
-            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+        'GENERATE QR',
+        style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
       )),
     );
   }
 
-  _buildTextField() {
+  Padding _buildTextField() {
     return Padding(
       padding: EdgeInsets.all(2),
       child: Column(
@@ -159,9 +147,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide: BorderSide(color: Colors.white)),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.white)),
             ),
           ),
           SizedBox(
@@ -182,8 +168,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                         color: Colors.white,
                       )
                     : Icon(Icons.visibility, color: Colors.white),
-                onPressed: () =>
-                    setState(() => isPasswordVisible = !isPasswordVisible),
+                onPressed: () => setState(() => isPasswordVisible = !isPasswordVisible),
               ),
               hintText: 'Wi-Fi Password',
               hintStyle: TextStyle(color: Colors.grey),
@@ -192,9 +177,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.white)),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.white)),
             ),
           ),
         ],
@@ -216,21 +199,18 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
               decoration: BoxDecoration(
                 color: Color(0xff325CFD),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
               ),
             ),
             Padding(
-              padding:
-                  EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
+              padding: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
               child: Column(
                 children: <Widget>[
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.18,
                     child: bytes.isEmpty
                         ? Center(
-                            child: Text('Empty Code',
-                                style: TextStyle(color: Colors.black38)),
+                            child: Text('Empty Code', style: TextStyle(color: Colors.black38)),
                           )
                         : Image.memory(bytes),
                   ),
@@ -247,19 +227,15 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                               child: Center(
                                 child: Text(
                                   'Remove',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => this
-                                  .setState(() => this.bytes = Uint8List(0)),
+                              onTap: () => setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
-                        Text('|',
-                            style:
-                                TextStyle(fontSize: 15, color: Colors.black26)),
+                        Text('|', style: TextStyle(fontSize: 15, color: Colors.black26)),
                         Expanded(
                           flex: 5,
                           child: Material(
@@ -267,20 +243,17 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(
-                                    this.bytes);
+                                Map result = await ImageGallerySaver.saveImage(this.bytes);
                                 if (result['isSuccess']) {
-                                  showAlertDialog(context, "Great", "Saved");
+                                  showAlertDialog(context, 'Great', 'Saved');
                                 } else {
-                                  showAlertDialog(
-                                      context, "Error", "Save failed!");
+                                  showAlertDialog(context, 'Error', 'Save failed!');
                                 }
                               },
                               child: Center(
                                 child: Text(
                                   'Save',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -297,10 +270,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                             onPressed: () async {
                               if (bytes != null) {
                                 await WcFlutterShare.share(
-                                    sharePopupTitle: 'share',
-                                    fileName: 'share.png',
-                                    mimeType: 'image/png',
-                                    bytesOfFile: bytes);
+                                    sharePopupTitle: 'share', fileName: 'share.png', mimeType: 'image/png', bytesOfFile: bytes);
                               }
                             },
                           ),
@@ -317,17 +287,18 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context, String title, String message) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
+    var alert = AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [

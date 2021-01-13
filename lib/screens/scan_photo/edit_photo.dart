@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
 import 'package:qr_scanner/screens/scan_photo/scan_photo_screen.dart';
@@ -17,7 +16,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
 
-  final AdvertService _advertService = new AdvertService();
+  final AdvertService _advertService = AdvertService();
 
   double sat = 1;
   double bright = 0;
@@ -91,7 +90,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       appBar: AppBar(
           backgroundColor: Color(0xff1D1F22),
           title: Text(
-            "Edit Image",
+            'Edit Image',
             style: TextStyle(color: Colors.white),
           ),
           actions: <Widget>[
@@ -183,6 +182,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
             Icons.flip,
             color: Colors.white,
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'Flip',
             style: TextStyle(
@@ -195,6 +195,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
             Icons.rotate_left,
             color: Colors.white,
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'Rotate left',
             style: TextStyle(
@@ -207,6 +208,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
             Icons.rotate_right,
             color: Colors.white,
           ),
+          // ignore: deprecated_member_use
           title: Text(
             'Rotate right',
             style: TextStyle(
@@ -235,16 +237,16 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   }
 
   Future<void> crop([bool test = false]) async {
-    final ExtendedImageEditorState state = editorKey.currentState;
-    final Rect rect = state.getCropRect();
-    final EditActionDetails action = state.editAction;
-    final double radian = action.rotateAngle;
+    final state = editorKey.currentState;
+    final rect = state.getCropRect();
+    final action = state.editAction;
+    final radian = action.rotateAngle;
 
-    final bool flipHorizontal = action.flipY;
-    final bool flipVertical = action.flipX;
-    final Uint8List img = state.rawImageData;
+    final flipHorizontal = action.flipY;
+    final flipVertical = action.flipX;
+    final img = state.rawImageData;
 
-    final ImageEditorOption option = ImageEditorOption();
+    final option = ImageEditorOption();
 
     option.addOption(ClipOption.fromRect(rect));
     option.addOption(
@@ -259,16 +261,14 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
     option.outputFormat = const OutputFormat.jpeg(100);
 
-    final DateTime start = DateTime.now();
-    final Uint8List result = await ImageEditor.editImage(
+    final result = await ImageEditor.editImage(
       image: img,
       imageEditorOption: option,
     );
 
-    final Duration diff = DateTime.now().difference(start);
     image.writeAsBytesSync(result);
 
-    Future.delayed(Duration(seconds: 0)).then((value) {
+    await Future.delayed(Duration(seconds: 0)).then((value) {
       setState(() {
         _advertService.disposeAllAdverBottom();
         _advertService.disposeAllAdverTop();
@@ -307,7 +307,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               color: Theme.of(context).accentColor,
             ),
             Text(
-              "Saturation",
+              'Saturation',
               style: TextStyle(color: Theme.of(context).accentColor),
             )
           ],
@@ -353,7 +353,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               color: Theme.of(context).accentColor,
             ),
             Text(
-              "Brightness",
+              'Brightness',
               style:
                   TextStyle(color: Theme.of(context).accentColor, fontSize: 12),
             )
@@ -401,7 +401,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               color: Theme.of(context).accentColor,
             ),
             Text(
-              "Contrast",
+              'Contrast',
               style: TextStyle(color: Theme.of(context).accentColor),
             )
           ],

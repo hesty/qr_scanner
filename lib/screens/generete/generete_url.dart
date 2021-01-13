@@ -23,12 +23,12 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
 
   Uint8List bytes = Uint8List(0);
 
-  AdvertService _advertService = AdvertService();
+  final _advertService = AdvertService();
 
   @override
   void initState() {
     super.initState();
-    _inputController = new TextEditingController();
+    _inputController = TextEditingController();
     _advertService.showIntesitial();
     getHistory();
   }
@@ -91,8 +91,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => this
-                                  .setState(() => this.bytes = Uint8List(0)),
+                              onTap: () => setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
@@ -109,10 +108,10 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                                 Map result = await ImageGallerySaver.saveImage(
                                     this.bytes);
                                 if (result['isSuccess']) {
-                                  showAlertDialog(context, "Great", "Saved");
+                                  showAlertDialog(context, 'Great', 'Saved');
                                 } else {
                                   showAlertDialog(
-                                      context, "Error", "Save failed!");
+                                      context, 'Error', 'Save failed!');
                                 }
                               },
                               child: Center(
@@ -157,31 +156,31 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
   }
 
   Future _generateBarCode(String inputCode) async {
-    Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() {
-      this.bytes = result;
+    var result = await scanner.generateBarCode(inputCode);
+    setState(() {
+      bytes = result;
       AddDatabese();
     });
   }
 
   void AddDatabese() async {
     await _databaseHelper
-        .insert(GenerateHistoryModel("Url", this._inputController.text, bytes));
+        .insert(GenerateHistoryModel('Url', _inputController.text, bytes));
     setState(() {
       getHistory();
     });
   }
 
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
 
     await historyFuture.then((data) {
       setState(() {
-        this.allHistory = data;
+        allHistory = data;
       });
     });
   }
@@ -225,7 +224,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
               color: Colors.white,
             ),
             onPressed: () async {
-              ClipboardData data = await Clipboard.getData('text/plain');
+              var data = await Clipboard.getData('text/plain');
               setState(() {
                 _inputController.text = data.text.toString();
               });
@@ -236,7 +235,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
     );
   }
 
-  _buildGenerateButton() {
+  Container _buildGenerateButton() {
     return Container(
       width: 200,
       height: 60,
@@ -246,14 +245,14 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
               topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
       child: Center(
           child: Text(
-        "GENERATE QR",
+        'GENERATE QR',
         style: TextStyle(
             color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
       )),
     );
   }
 
-  _buildBody() {
+  Column _buildBody() {
     return Column(
       children: [
         Expanded(
@@ -281,7 +280,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
                           onTap: () =>
-                              _generateBarCode(this._inputController.text),
+                              _generateBarCode(_inputController.text),
                           child: _buildGenerateButton(),
                         ),
                       ),
@@ -298,17 +297,18 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context, String title, String message) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
+    var alert = AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [

@@ -15,10 +15,10 @@ class GenerateMoreList extends StatefulWidget {
 }
 
 class _GenerateMoreListState extends State<GenerateMoreList> {
-  final AdvertService _advertService = new AdvertService();
+  final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    FirebaseAdMob.instance.initialize(
+    await FirebaseAdMob.instance.initialize(
         appId: 'ca-app-pub-4694190778906605~5980739782',
         analyticsEnabled: true);
     _advertService.showIntesitial();
@@ -58,7 +58,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                           builder: (context) => GenerateWifiQr()));
                 },
                 title: Text(
-                  "Wi-Fi",
+                  'Wi-Fi',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -80,7 +80,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                       MaterialPageRoute(
                           builder: (context) => GenerateEmailQr()));
                 },
-                title: Text("E-Mail", style: TextStyle(color: Colors.white)),
+                title: Text('E-Mail', style: TextStyle(color: Colors.white)),
               ),
             ),
             Divider(
@@ -98,7 +98,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => GenerateMap()));
                 },
-                title: Text("Map Coordinate",
+                title: Text('Map Coordinate',
                     style: TextStyle(color: Colors.white)),
               ),
             ),
@@ -117,7 +117,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => GenerateSmsQr()));
                 },
-                title: Text("Sms", style: TextStyle(color: Colors.white)),
+                title: Text('Sms', style: TextStyle(color: Colors.white)),
               ),
             ),
             Divider(

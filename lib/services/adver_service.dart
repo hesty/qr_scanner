@@ -18,6 +18,7 @@ class AdvertService {
   }
 
   
+  // ignore: always_declare_return_types
   showBannerBottom() {
     banner = BannerAd(
         adUnitId: 'ca-app-pub-4694190778906605/8642578056',
@@ -29,6 +30,7 @@ class AdvertService {
       ..show(anchorType: AnchorType.bottom);
   }
 
+  // ignore: always_declare_return_types
   showBannerTop() {
     banner2 = BannerAd(
         adUnitId: 'ca-app-pub-4694190778906605/8642578056',
@@ -41,6 +43,7 @@ class AdvertService {
   }
 
 
+  // ignore: always_declare_return_types
   showIntesitial() {
     interstitialAd = InterstitialAd(
         adUnitId: 'ca-app-pub-4694190778906605/5989312798',
@@ -51,10 +54,12 @@ class AdvertService {
       ..show();
   }
 
+  // ignore: always_declare_return_types
   disposeAllAdverTop() async {
     await banner2?.dispose();
   }
 
+  // ignore: always_declare_return_types
   disposeAllAdverBottom() async {
     await banner?.dispose();
   }

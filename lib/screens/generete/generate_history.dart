@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
+
+// ignore: must_be_immutable
 class GenerateHistory extends StatefulWidget {
   List history;
   GenerateHistory(this.history);
@@ -11,13 +13,13 @@ class GenerateHistory extends StatefulWidget {
 }
 
 class _GenerateHistoryState extends State<GenerateHistory> {
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
 
     await historyFuture.then((data) {
       setState(() {
-        this.widget.history = data;
+        widget.history = data;
       });
     });
   }
@@ -36,7 +38,7 @@ class _GenerateHistoryState extends State<GenerateHistory> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        title: Text("Generete History",
+        title: Text('Generete History',
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 30,

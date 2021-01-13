@@ -25,7 +25,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   @override
   void initState() {
     super.initState();
-    _inputController = new TextEditingController();
+    _inputController = TextEditingController();
     getHistory();
   }
 
@@ -51,21 +51,18 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
               decoration: BoxDecoration(
                 color: Color(0xff325CFD),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
               ),
             ),
             Padding(
-              padding:
-                  EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
+              padding: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
               child: Column(
                 children: <Widget>[
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.18,
                     child: bytes.isEmpty
                         ? Center(
-                            child: Text('Empty Code',
-                                style: TextStyle(color: Colors.black38)),
+                            child: Text('Empty Code', style: TextStyle(color: Colors.black38)),
                           )
                         : Image.memory(bytes),
                   ),
@@ -82,19 +79,15 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
                               child: Center(
                                 child: Text(
                                   'Remove',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => this
-                                  .setState(() => this.bytes = Uint8List(0)),
+                              onTap: () => setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
-                        Text('|',
-                            style:
-                                TextStyle(fontSize: 15, color: Colors.black26)),
+                        Text('|', style: TextStyle(fontSize: 15, color: Colors.black26)),
                         Expanded(
                           flex: 5,
                           child: Material(
@@ -102,20 +95,17 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(
-                                    this.bytes);
+                                Map result = await ImageGallerySaver.saveImage(this.bytes);
                                 if (result['isSuccess']) {
-                                  showAlertDialog(context, "Great", "Saved");
+                                  showAlertDialog(context, 'Great', 'Saved');
                                 } else {
-                                  showAlertDialog(
-                                      context, "Error", "Save failed!");
+                                  showAlertDialog(context, 'Error', 'Save failed!');
                                 }
                               },
                               child: Center(
                                 child: Text(
                                   'Save',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -132,10 +122,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
                             onPressed: () async {
                               if (bytes != null) {
                                 await WcFlutterShare.share(
-                                    sharePopupTitle: 'share',
-                                    fileName: 'share.png',
-                                    mimeType: 'image/png',
-                                    bytesOfFile: bytes);
+                                    sharePopupTitle: 'share', fileName: 'share.png', mimeType: 'image/png', bytesOfFile: bytes);
                               }
                             },
                           ),
@@ -153,28 +140,27 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   }
 
   Future _generateBarCode(String inputCode) async {
-    Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() => this.bytes = result);
+    var result = await scanner.generateBarCode(inputCode);
+    setState(() => bytes = result);
     AddDatabese();
   }
 
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
   void AddDatabese() async {
-    await _databaseHelper.insert(
-        GenerateHistoryModel("Phone", this._inputController.text, bytes));
+    await _databaseHelper.insert(GenerateHistoryModel('Phone', _inputController.text, bytes));
     setState(() {
       getHistory();
     });
   }
 
-  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
 
     await historyFuture.then((data) {
       setState(() {
-        this.allHistory = data;
+        allHistory = data;
       });
     });
   }
@@ -217,8 +203,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
             ),
             onPressed: () async {
               await FlutterContactPicker.requestPermission();
-              final PhoneContact contact =
-                  await FlutterContactPicker.pickPhoneContact();
+              final contact = await FlutterContactPicker.pickPhoneContact();
               setState(() {
                 _inputController.text = contact.phoneNumber.number;
               });
@@ -227,24 +212,21 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
     ]);
   }
 
-  _buildGenerateButton() {
+  Container _buildGenerateButton() {
     return Container(
       width: 200,
       height: 60,
-      decoration: BoxDecoration(
-          color: Color(0xff325CFD),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+      decoration:
+          BoxDecoration(color: Color(0xff325CFD), borderRadius: BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
       child: Center(
           child: Text(
-        "GENERATE QR",
-        style: TextStyle(
-            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+        'GENERATE QR',
+        style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
       )),
     );
   }
 
-  _buildBody() {
+  Column _buildBody() {
     return Column(
       children: [
         Expanded(
@@ -271,8 +253,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
                       child: Ink(
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
-                          onTap: () =>
-                              _generateBarCode(this._inputController.text),
+                          onTap: () => _generateBarCode(_inputController.text),
                           child: _buildGenerateButton(),
                         ),
                       ),
@@ -289,17 +270,18 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context, String title, String message) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
+    var alert = AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [

@@ -15,7 +15,7 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        title: Text("Scan Qr History",
+        title: Text('Scan Qr History',
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 30,

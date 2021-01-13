@@ -23,9 +23,9 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
   @override
   void initState() {
     super.initState();
-    _textEditingController = new TextEditingController();
-    _textEditingController2 = new TextEditingController();
-    _textEditingController3 = new TextEditingController();
+    _textEditingController = TextEditingController();
+    _textEditingController2 = TextEditingController();
+    _textEditingController3 = TextEditingController();
     getHistory();
   }
 
@@ -35,7 +35,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
       backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("E-Mail"),
+        title: Text('E-Mail'),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -68,16 +68,16 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                             onTap: () {
                               print(_textEditingController.text);
                               if (_textEditingController.text != null &&
-                                  _textEditingController.text != "" &&
+                                  _textEditingController.text != '' &&
                                   _textEditingController2.text != null &&
-                                  _textEditingController2.text != "" &&
+                                  _textEditingController2.text != '' &&
                                   _textEditingController3.text != null &&
-                                  _textEditingController3.text != "") {
-                                _generateBarCode("mailto:" +
+                                  _textEditingController3.text != '') {
+                                _generateBarCode('mailto:' +
                                     _textEditingController.text +
-                                    "?subject=" +
+                                    '?subject=' +
                                     _textEditingController2.text +
-                                    "&body=" +
+                                    '&body=' +
                                     _textEditingController3.text);
                               }
                             },
@@ -98,60 +98,50 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
   }
 
   Future _generateBarCode(String inputCode) async {
-    Uint8List result = await scanner.generateBarCode(inputCode);
-    this.setState(() {
-      this.bytes = result;
+    var result = await scanner.generateBarCode(inputCode);
+    setState(() {
+      bytes = result;
       AddDatabese();
     });
   }
 
   void AddDatabese() async {
-    await _databaseHelper.insert(GenerateHistoryModel(
-        "E-Mail",
-        "mailto:" +
-            _textEditingController.text +
-            "?subject=" +
-            _textEditingController2.text +
-            "&body=" +
-            _textEditingController3.text,
-        bytes));
+    await _databaseHelper.insert(GenerateHistoryModel('E-Mail',
+        'mailto:' + _textEditingController.text + '?subject=' + _textEditingController2.text + '&body=' + _textEditingController3.text, bytes));
     setState(() {
       getHistory();
     });
   }
 
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  List<GenerateHistoryModel> allHistory = List<GenerateHistoryModel>();
+  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
 
     await historyFuture.then((data) {
       setState(() {
-        this.allHistory = data;
+        allHistory = data;
       });
     });
   }
 
-  _buildGenerateButton() {
+  Container _buildGenerateButton() {
     return Container(
       width: 200,
       height: 60,
-      decoration: BoxDecoration(
-          color: Color(0xff325CFD),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+      decoration:
+          BoxDecoration(color: Color(0xff325CFD), borderRadius: BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
       child: Center(
           child: Text(
-        "GENERATE QR",
-        style: TextStyle(
-            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+        'GENERATE QR',
+        style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
       )),
     );
   }
 
-  _buildTextField() {
+  Padding _buildTextField() {
     return Padding(
       padding: EdgeInsets.all(2),
       child: Column(
@@ -170,9 +160,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.white)),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.white)),
             ),
           ),
           SizedBox(
@@ -193,9 +181,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.white)),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.white)),
             ),
           ),
           SizedBox(
@@ -217,9 +203,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.white)),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.white)),
             ),
           ),
         ],
@@ -241,21 +225,18 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
               decoration: BoxDecoration(
                 color: Color(0xff325CFD),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
               ),
             ),
             Padding(
-              padding:
-                  EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
+              padding: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
               child: Column(
                 children: <Widget>[
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.18,
                     child: bytes.isEmpty
                         ? Center(
-                            child: Text('Empty Code',
-                                style: TextStyle(color: Colors.black38)),
+                            child: Text('Empty Code', style: TextStyle(color: Colors.black38)),
                           )
                         : Image.memory(bytes),
                   ),
@@ -272,19 +253,15 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                               child: Center(
                                 child: Text(
                                   'Remove',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => this
-                                  .setState(() => this.bytes = Uint8List(0)),
+                              onTap: () => setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
-                        Text('|',
-                            style:
-                                TextStyle(fontSize: 15, color: Colors.black26)),
+                        Text('|', style: TextStyle(fontSize: 15, color: Colors.black26)),
                         Expanded(
                           flex: 5,
                           child: Material(
@@ -292,20 +269,17 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(
-                                    this.bytes);
+                                Map result = await ImageGallerySaver.saveImage(this.bytes);
                                 if (result['isSuccess']) {
-                                  showAlertDialog(
-                                      context, "Save", "Successful");
+                                  showAlertDialog(context, 'Save', 'Successful');
                                 } else {
-                                  showAlertDialog(context, "Save", "Failed!");
+                                  showAlertDialog(context, 'Save', 'Failed!');
                                 }
                               },
                               child: Center(
                                 child: Text(
                                   'Save',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -322,10 +296,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                             onPressed: () async {
                               if (bytes != null) {
                                 await WcFlutterShare.share(
-                                    sharePopupTitle: 'share',
-                                    fileName: 'share.png',
-                                    mimeType: 'image/png',
-                                    bytesOfFile: bytes);
+                                    sharePopupTitle: 'share', fileName: 'share.png', mimeType: 'image/png', bytesOfFile: bytes);
                               }
                             },
                           ),
@@ -342,17 +313,18 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
     );
   }
 
+  // ignore: always_declare_return_types
   showAlertDialog(BuildContext context, String title, String message) {
     // set up the button
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text('OK'),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
+    var alert = AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [
