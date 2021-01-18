@@ -1,10 +1,11 @@
 import 'dart:typed_data';
-
+import 'package:qr_scanner/utils/db_scan_history.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_scanner/models/scan_history_model.dart';
+import 'package:qr_scanner/screens/scan_qr/scan_qr_history.dart';
 import 'package:qr_scanner/services/adver_service.dart';
-import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_admob/firebase_admob.dart';
@@ -29,17 +30,19 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
   final emailRegExp = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
+
   Uint8List bytes;
+
+  final DbScanHistory _databaseHelper = DbScanHistory();
+
+  List<ScanHistoryModel> allHistory = <ScanHistoryModel>[];
+
   void AddDatabese() async {
     await _databaseHelper.insertForScan(ScanHistoryModel(widget.result, bytes));
     setState(() {
       getHistory();
     });
   }
-
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-
-  List<ScanHistoryModel> allHistory = <ScanHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getScanHistory();
@@ -51,19 +54,18 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
     });
   }
 
-  // ignore: unused_element
-  // Future _generateBarCode() async {
-  //   var result = await scanner.generateBarCode(widget.result);
-  //   setState(() {
-  //     bytes = result;
-  //     AddDatabese();
-  //   });
-  // }
-//
+  Future _generateBarCode() async {
+    var result = await scanner.generateBarCode(widget.result);
+    setState(() {
+      bytes = result;
+      AddDatabese();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-
+    _generateBarCode();
     _outputController = TextEditingController();
     setState(() {
       _outputController.text = widget.result;
@@ -78,6 +80,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
     });
     adsk();
     _advertService.showBannerBottom();
+    //getHistory();
   }
 
   @override
@@ -91,7 +94,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
   final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~5980739782', analyticsEnabled: true);
+    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
   }
 
   @override
@@ -99,6 +102,26 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
     return Scaffold(
       backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
+        actions: [
+          IconButton(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(),
+            tooltip: 'History',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ScanQrHistory(
+                            history: allHistory,
+                          )));
+            },
+            icon: Icon(
+              Icons.restore,
+              color: Colors.white,
+              size: 30,
+            ),
+          ),
+        ],
         centerTitle: true,
         title: Text('Show Details'),
         elevation: 0,

@@ -17,13 +17,9 @@ class AdvertService {
     );
   }
 
-  
   // ignore: always_declare_return_types
   showBannerBottom() {
-    banner = BannerAd(
-        adUnitId: 'ca-app-pub-4694190778906605/8642578056',
-        size: AdSize.banner,
-        targetingInfo: _targetingInfo);
+    banner = BannerAd(adUnitId: 'ca-app-pub-4694190778906605/8642578056', size: AdSize.banner, targetingInfo: _targetingInfo);
 
     banner
       ..load()
@@ -32,22 +28,16 @@ class AdvertService {
 
   // ignore: always_declare_return_types
   showBannerTop() {
-    banner2 = BannerAd(
-        adUnitId: 'ca-app-pub-4694190778906605/8642578056',
-        size: AdSize.banner,
-        targetingInfo: _targetingInfo);
+    banner2 = BannerAd(adUnitId: 'ca-app-pub-4694190778906605/8642578056', size: AdSize.banner, targetingInfo: _targetingInfo);
 
     banner2
       ..load()
       ..show(anchorType: AnchorType.top, anchorOffset: 23);
   }
 
-
   // ignore: always_declare_return_types
   showIntesitial() {
-    interstitialAd = InterstitialAd(
-        adUnitId: 'ca-app-pub-4694190778906605/5989312798',
-        targetingInfo: _targetingInfo);
+    interstitialAd = InterstitialAd(adUnitId: 'ca-app-pub-4694190778906605/5989312798', targetingInfo: _targetingInfo);
 
     interstitialAd
       ..load()

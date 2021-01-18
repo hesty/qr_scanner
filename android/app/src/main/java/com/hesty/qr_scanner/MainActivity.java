@@ -1,4 +1,4 @@
-package com.hestycompany.qr_scanner;
+package com.hesty.qr_scanner;
 
 import android.content.Intent;
 import androidx.annotation.NonNull;

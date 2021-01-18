@@ -12,7 +12,7 @@ import 'package:qr_scanner/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~5980739782');
+  await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815');
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   runApp(MyApp());

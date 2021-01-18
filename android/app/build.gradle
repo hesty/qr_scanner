@@ -41,11 +41,11 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.hestycompany.qr_scanner"
+        applicationId "com.hesty.qr_scanner"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 5
+        versionName "1.0.3"
         multiDexEnabled true
     }
 

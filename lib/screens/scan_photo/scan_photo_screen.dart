@@ -40,9 +40,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
   final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(
-        appId: 'ca-app-pub-4694190778906605~5980739782',
-        analyticsEnabled: true);
+    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
   }
 
   @override
@@ -56,10 +54,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                 child: Center(
                   child: SafeArea(
                     child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(15),
-                              bottomRight: Radius.circular(15))),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15))),
                       child: Column(
                         children: [
                           SizedBox(
@@ -67,10 +62,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                           ),
                           Text(
                             'Scan Photo',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -103,9 +95,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                             textInputAction: TextInputAction.go,
                             cursorColor: Colors.white,
                             decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(color: Colors.white)),
+                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.white)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5),
                               ),
@@ -119,15 +109,12 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
-                                  if (_outputController.text != null &&
-                                      _outputController.text != '') {
+                                  if (_outputController.text != null && _outputController.text != '') {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                ScanPhotoDetail(
-                                                  result:
-                                                      _outputController.text,
+                                            builder: (context) => ScanPhotoDetail(
+                                                  result: _outputController.text,
                                                 )));
                                   } else {
                                     showAlertDialog(context);
@@ -136,8 +123,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                               ),
                               hintMaxLines: 3,
                               hintText: 'Your Code will be Here.',
-                              hintStyle:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
+                              hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
                             ),
                           ),
                         ),
@@ -157,16 +143,11 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                               height: 60,
                               decoration: BoxDecoration(
                                   color: Color(0xff325CFD),
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(15),
-                                      bottomLeft: Radius.circular(15))),
+                                  borderRadius: BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
                               child: Center(
                                   child: Text(
                                 'SCAN PHOTO',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
                               )),
                             ),
                           ),

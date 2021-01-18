@@ -18,9 +18,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
   final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(
-        appId: 'ca-app-pub-4694190778906605~5980739782',
-        analyticsEnabled: true);
+    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
     _advertService.showIntesitial();
   }
 
@@ -52,10 +50,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                   color: Colors.white,
                 ),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GenerateWifiQr()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => GenerateWifiQr()));
                 },
                 title: Text(
                   'Wi-Fi',
@@ -75,10 +70,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                 ),
                 // tileColor: Color(0xff325CFD),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GenerateEmailQr()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => GenerateEmailQr()));
                 },
                 title: Text('E-Mail', style: TextStyle(color: Colors.white)),
               ),
@@ -95,11 +87,9 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                 ),
                 //tileColor: Color(0xff325CFD),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => GenerateMap()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => GenerateMap()));
                 },
-                title: Text('Map Coordinate',
-                    style: TextStyle(color: Colors.white)),
+                title: Text('Map Coordinate', style: TextStyle(color: Colors.white)),
               ),
             ),
             Divider(
@@ -114,8 +104,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
                 ),
                 //tileColor: Color(0xff325CFD),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => GenerateSmsQr()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => GenerateSmsQr()));
                 },
                 title: Text('Sms', style: TextStyle(color: Colors.white)),
               ),

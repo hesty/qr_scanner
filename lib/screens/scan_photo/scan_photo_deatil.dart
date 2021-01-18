@@ -75,7 +75,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   final AdvertService _advertService = AdvertService();
   Future adsk() async {
     await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~5980739782', analyticsEnabled: true);
+    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
   }
 
   @override
