@@ -10,16 +10,16 @@ import '../../models/generate_history_model.dart';
 import '../../utils/db_helper.dart';
 
 class GenerateEmailQr extends StatefulWidget {
-  GenerateEmailQr({Key key}) : super(key: key);
+  GenerateEmailQr({Key? key}) : super(key: key);
 
   @override
   _GenerateEmailQrState createState() => _GenerateEmailQrState();
 }
 
 class _GenerateEmailQrState extends State<GenerateEmailQr> {
-  TextEditingController _textEditingController;
-  TextEditingController _textEditingController2;
-  TextEditingController _textEditingController3;
+  TextEditingController? _textEditingController;
+  TextEditingController? _textEditingController2;
+  TextEditingController? _textEditingController3;
   bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
   @override
@@ -68,19 +68,19 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                           color: Colors.white.withOpacity(0.0),
                           child: InkWell(
                             onTap: () {
-                              print(_textEditingController.text);
-                              if (_textEditingController.text != null &&
-                                  _textEditingController.text != '' &&
-                                  _textEditingController2.text != null &&
-                                  _textEditingController2.text != '' &&
-                                  _textEditingController3.text != null &&
-                                  _textEditingController3.text != '') {
+                              print(_textEditingController!.text);
+                              if (_textEditingController!.text != null &&
+                                  _textEditingController!.text != '' &&
+                                  _textEditingController2!.text != null &&
+                                  _textEditingController2!.text != '' &&
+                                  _textEditingController3!.text != null &&
+                                  _textEditingController3!.text != '') {
                                 _generateBarCode('mailto:' +
-                                    _textEditingController.text +
+                                    _textEditingController!.text +
                                     '?subject=' +
-                                    _textEditingController2.text +
+                                    _textEditingController2!.text +
                                     '&body=' +
-                                    _textEditingController3.text);
+                                    _textEditingController3!.text);
                               }
                             },
                             child: _buildGenerateButton(),
@@ -109,7 +109,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
 
   void AddDatabese() async {
     await _databaseHelper.insert(GenerateHistoryModel('E-Mail',
-        'mailto:' + _textEditingController.text + '?subject=' + _textEditingController2.text + '&body=' + _textEditingController3.text, bytes));
+        'mailto:' + _textEditingController!.text + '?subject=' + _textEditingController2!.text + '&body=' + _textEditingController3!.text, bytes));
     setState(() {
       getHistory();
     });
@@ -271,7 +271,7 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(this.bytes);
+                                Map result = await (ImageGallerySaver.saveImage(this.bytes));
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, 'Save', 'Successful');
                                 } else {

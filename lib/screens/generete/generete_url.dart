@@ -19,7 +19,7 @@ class QrGenerateUrl extends StatefulWidget {
 
 class _QrGenerateScreenState extends State<QrGenerateUrl>
     with SingleTickerProviderStateMixin {
-  TextEditingController _inputController;
+  TextEditingController? _inputController;
 
   Uint8List bytes = Uint8List(0);
 
@@ -103,8 +103,8 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(
-                                    this.bytes);
+                                var result = await (ImageGallerySaver.saveImage(
+                                    this.bytes));
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, 'Great', 'Saved');
                                 } else {
@@ -163,7 +163,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
 
   void AddDatabese() async {
     await _databaseHelper
-        .insert(GenerateHistoryModel('Url', _inputController.text, bytes));
+        .insert(GenerateHistoryModel('Url', _inputController!.text, bytes));
     setState(() {
       getHistory();
     });
@@ -224,7 +224,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
             onPressed: () async {
               var data = await Clipboard.getData('text/plain');
               setState(() {
-                _inputController.text = data.text.toString();
+                _inputController!.text = data!.text.toString();
               });
             },
           ),
@@ -278,7 +278,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
                           onTap: () =>
-                              _generateBarCode(_inputController.text),
+                              _generateBarCode(_inputController!.text),
                           child: _buildGenerateButton(),
                         ),
                       ),

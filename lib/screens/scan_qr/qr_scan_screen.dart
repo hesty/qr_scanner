@@ -13,7 +13,7 @@ class QrScanScreen extends StatefulWidget {
 }
 
 class _QrScanScreenState extends State<QrScanScreen> {
-  TextEditingController _outputController;
+  TextEditingController? _outputController;
 
   @override
   void initState() {
@@ -124,7 +124,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
         ));
   }
 
-  String barcode;
+  String? barcode;
 
   Future _scan() async {
     await Permission.camera.request();
@@ -133,13 +133,13 @@ class _QrScanScreenState extends State<QrScanScreen> {
       print('Nothing return.');
     } else {
       setState(() async {
-        _outputController.text = barcode;
+        _outputController!.text = barcode!;
         setState(() {});
         await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ShowDeatilsScan(_outputController.text))).then((value) {});
+                    ShowDeatilsScan(_outputController!.text))).then((value) {});
       });
     }
   }
@@ -169,13 +169,13 @@ class _QrScanScreenState extends State<QrScanScreen> {
                     size: 20,
                   ),
                   onPressed: () async {
-                    if (_outputController.text != null &&
-                        _outputController.text != '') {
+                    if (_outputController!.text != null &&
+                        _outputController!.text != '') {
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  ShowDeatilsScan(_outputController.text)));
+                                  ShowDeatilsScan(_outputController!.text)));
                     } else {
                       showAlertDialog(context);
                     }

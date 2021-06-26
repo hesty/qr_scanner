@@ -23,7 +23,7 @@ class QrGenerateScreen extends StatefulWidget {
 
 class _QrGenerateScreenState extends State<QrGenerateScreen>
     with SingleTickerProviderStateMixin {
-  TextEditingController _inputController;
+  TextEditingController? _inputController;
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
@@ -40,7 +40,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
   }
 
   Uint8List bytes = Uint8List(0);
-  TabController tabController;
+  TabController? tabController;
 
   @override
   void initState() {
@@ -177,8 +177,8 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(
-                                    this.bytes);
+                                Map result = await (ImageGallerySaver.saveImage(
+                                    this.bytes));
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, 'Great', 'Saved');
                                 } else {
@@ -237,7 +237,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
 
   void AddDatabese() async {
     await _databaseHelper
-        .insert(GenerateHistoryModel('Text', _inputController.text, bytes));
+        .insert(GenerateHistoryModel('Text', _inputController!.text, bytes));
     setState(() {
       getHistory();
     });
@@ -282,7 +282,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
           onPressed: () async {
             var data = await Clipboard.getData('text/plain');
             setState(() {
-              _inputController.text = data.text.toString();
+              _inputController!.text = data!.text.toString();
             });
           },
         ),
@@ -335,7 +335,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
                           onTap: () async {
-                            await _generateBarCode(_inputController.text);
+                            await _generateBarCode(_inputController!.text);
                           },
                           child: _buildGenerateButton(),
                         ),

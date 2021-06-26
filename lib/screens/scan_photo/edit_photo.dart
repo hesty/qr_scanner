@@ -7,7 +7,7 @@ import 'package:image_editor/image_editor.dart' hide ImageSource;
 import 'scan_photo_screen.dart';
 
 class EditPhotoScreen extends StatefulWidget {
-  final List arguments;
+  final List? arguments;
   EditPhotoScreen({this.arguments});
   @override
   _EditPhotoScreenState createState() => _EditPhotoScreenState();
@@ -71,11 +71,11 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     return m;
   }
 
-  File image;
+  File? image;
   @override
   void initState() {
     super.initState();
-    image = widget.arguments[0];
+    image = widget.arguments![0];
   }
 
   @override
@@ -150,13 +150,13 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               ? Colors.white.withOpacity(bright)
               : Colors.black.withOpacity(-bright),
           colorBlendMode: bright > 0 ? BlendMode.lighten : BlendMode.darken,
-          image: ExtendedFileImageProvider(image),
+          image: ExtendedFileImageProvider(image!),
           height: MediaQuery.of(context).size.width,
           width: MediaQuery.of(context).size.width,
           extendedImageEditorKey: editorKey,
           mode: ExtendedImageMode.editor,
           fit: BoxFit.contain,
-          initEditorConfigHandler: (ExtendedImageState state) {
+          initEditorConfigHandler: (ExtendedImageState? state) {
             return EditorConfig(
               maxScale: 8.0,
               cropRectPadding: const EdgeInsets.all(20.0),
@@ -232,9 +232,9 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   }
 
   Future<void> crop([bool test = false]) async {
-    final state = editorKey.currentState;
-    final rect = state.getCropRect();
-    final action = state.editAction;
+    final state = editorKey.currentState!;
+    final rect = state.getCropRect()!;
+    final action = state.editAction!;
     final radian = action.rotateAngle;
 
     final flipHorizontal = action.flipY;
@@ -256,12 +256,12 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
     option.outputFormat = const OutputFormat.jpeg(100);
 
-    final result = await ImageEditor.editImage(
+    final result = await (ImageEditor.editImage(
       image: img,
       imageEditorOption: option,
-    );
+    ));
 
-    image.writeAsBytesSync(result);
+    image!.writeAsBytesSync(result!);
 
     await Future.delayed(Duration(seconds: 0)).then((value) {
       Navigator.pushReplacement(
@@ -275,11 +275,11 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   }
 
   void flip() {
-    editorKey.currentState.flip();
+    editorKey.currentState!.flip();
   }
 
   void rotate(bool right) {
-    editorKey.currentState.rotate(right: right);
+    editorKey.currentState!.rotate(right: right);
   }
 
   Widget _buildSat() {

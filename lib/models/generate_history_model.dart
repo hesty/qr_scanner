@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 class GenerateHistoryModel {
-  int id;
-  String type;
-  String text;
-  Uint8List photo;
+  int? id;
+  String? type;
+  String? text;
+  Uint8List? photo;
 
   GenerateHistoryModel(this.type, this.text, this.photo);
   GenerateHistoryModel.withId(this.id, this.type, this.text, this.photo);

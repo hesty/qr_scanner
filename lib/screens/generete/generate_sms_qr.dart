@@ -10,15 +10,15 @@ import '../../models/generate_history_model.dart';
 import '../../utils/db_helper.dart';
 
 class GenerateSmsQr extends StatefulWidget {
-  GenerateSmsQr({Key key}) : super(key: key);
+  GenerateSmsQr({Key? key}) : super(key: key);
 
   @override
   _GenerateSmsQrState createState() => _GenerateSmsQrState();
 }
 
 class _GenerateSmsQrState extends State<GenerateSmsQr> {
-  TextEditingController _textEditingController;
-  TextEditingController _textEditingController2;
+  TextEditingController? _textEditingController;
+  TextEditingController? _textEditingController2;
   Uint8List bytes = Uint8List(0);
   @override
   void initState() {
@@ -52,9 +52,9 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
     await _databaseHelper.insert(GenerateHistoryModel(
         'Sms',
         'sms:' +
-            _textEditingController.text +
+            _textEditingController!.text +
             '?body=' +
-            _textEditingController2.text,
+            _textEditingController2!.text,
         bytes));
     setState(() {
       getHistory();
@@ -224,8 +224,8 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(
-                                    this.bytes);
+                                var result = await (ImageGallerySaver.saveImage(
+                                    this.bytes));
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, 'Great', 'Saved');
                                 } else {
@@ -330,15 +330,15 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
                           onTap: () {
-                            print(_textEditingController.text);
-                            if (_textEditingController.text != null &&
-                                _textEditingController.text != '' &&
-                                _textEditingController2.text != null &&
-                                _textEditingController2.text != '') {
+                            print(_textEditingController!.text);
+                            if (_textEditingController!.text != null &&
+                                _textEditingController!.text != '' &&
+                                _textEditingController2!.text != null &&
+                                _textEditingController2!.text != '') {
                               _generateBarCode('sms:' +
-                                  _textEditingController.text +
+                                  _textEditingController!.text +
                                   '?body=' +
-                                  _textEditingController2.text);
+                                  _textEditingController2!.text);
                             }
                           },
                           child: _buildGenerateButton(),

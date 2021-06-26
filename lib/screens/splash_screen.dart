@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 
 class SplashScren extends StatefulWidget {
-  SplashScren({Key key}) : super(key: key);
+  SplashScren({Key? key}) : super(key: key);
 
   @override
   _SplashScrenState createState() => _SplashScrenState();
