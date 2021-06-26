@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
@@ -203,11 +202,11 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
               color: Colors.white,
             ),
             onPressed: () async {
-              await FlutterContactPicker.requestPermission();
-              final contact = await FlutterContactPicker.pickPhoneContact();
-              setState(() {
-                _inputController.text = contact.phoneNumber.number;
-              });
+              //await FlutterContactPicker.requestPermission();
+              //final contact = await FlutterContactPicker.pickPhoneContact();
+              //setState(() {
+              //  _inputController.text = contact.phoneNumber.number;
+              //});
             },
           )),
     ]);

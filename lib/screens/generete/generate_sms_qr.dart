@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
@@ -112,12 +111,12 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                   color: Colors.white,
                 ),
                 onPressed: () async {
-                  await FlutterContactPicker.requestPermission();
-                  final contact =
-                      await FlutterContactPicker.pickPhoneContact();
-                  setState(() {
-                    _textEditingController.text = contact.phoneNumber.number;
-                  });
+                  // await FlutterContactPicker.requestPermission();
+                  // final contact =
+                  //     await FlutterContactPicker.pickPhoneContact();
+                  // setState(() {
+                  // _textEditingController.text = contact.phoneNumber.number;
+                  // });
                 },
               ),
               hintText: 'Number',
@@ -210,7 +209,8 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => setState(() => this.bytes = Uint8List(0)),
+                              onTap: () =>
+                                  setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),

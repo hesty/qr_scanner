@@ -229,7 +229,6 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
 
   Future _generateBarCode(String inputCode) async {
     var result = await scanner.generateBarCode(inputCode);
-    //this.setState(() => this.bytes = result);
     setState(() {
       bytes = result;
       AddDatabese();
