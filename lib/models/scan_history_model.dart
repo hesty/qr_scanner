@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
 class ScanHistoryModel {
-  int id;
-  String text;
-  Uint8List photo;
+  int? id;
+  String? text;
+  Uint8List? photo;
 
   ScanHistoryModel(this.text, this.photo);
   ScanHistoryModel.withId(this.id, this.text, this.photo);

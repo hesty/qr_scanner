@@ -12,8 +12,8 @@ import 'scan_photo_deatil.dart';
 
 // ignore: must_be_immutable
 class ScanPhotoScreen extends StatefulWidget {
-  File file;
-  String sc;
+  File? file;
+  String? sc;
   ScanPhotoScreen({this.file, this.sc});
 
   @override
@@ -21,7 +21,7 @@ class ScanPhotoScreen extends StatefulWidget {
 }
 
 class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
-  TextEditingController _outputController;
+  TextEditingController? _outputController;
 
   @override
   void initState() {
@@ -104,15 +104,15 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
-                                  if (_outputController.text != null &&
-                                      _outputController.text != '') {
+                                  if (_outputController!.text != null &&
+                                      _outputController!.text != '') {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 ScanPhotoDetail(
                                                   result:
-                                                      _outputController.text,
+                                                      _outputController!.text,
                                                 )));
                                   } else {
                                     showAlertDialog(context);
@@ -175,7 +175,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
         ));
   }
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
   Future getImage() async {
@@ -229,7 +229,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
     if (file == null) return;
     var bytes = file.readAsBytes();
     var barcode = await scanner.scanBytes(await bytes);
-    _outputController.text = barcode;
+    _outputController!.text = barcode;
   }
 
   Future _scanPath() async {
@@ -241,13 +241,13 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
     var barcode = await scanner.scanPath(path);
     setState(() {
       if (barcode != null) {
-        _outputController.text = barcode;
+        _outputController!.text = barcode;
 
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => ScanPhotoDetail(
-                      result: _outputController.text,
+                      result: _outputController!.text,
                     )));
       }
     });

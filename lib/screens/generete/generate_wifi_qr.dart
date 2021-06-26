@@ -10,15 +10,15 @@ import '../../models/generate_history_model.dart';
 import '../../utils/db_helper.dart';
 
 class GenerateWifiQr extends StatefulWidget {
-  GenerateWifiQr({Key key}) : super(key: key);
+  GenerateWifiQr({Key? key}) : super(key: key);
 
   @override
   _GenerateWifiQrState createState() => _GenerateWifiQrState();
 }
 
 class _GenerateWifiQrState extends State<GenerateWifiQr> {
-  TextEditingController _textEditingController;
-  TextEditingController _textEditingController2;
+  TextEditingController? _textEditingController;
+  TextEditingController? _textEditingController2;
   bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
   @override
@@ -66,12 +66,12 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                           color: Colors.white.withOpacity(0.0),
                           child: InkWell(
                             onTap: () {
-                              print(_textEditingController.text);
-                              if (_textEditingController.text != null &&
-                                  _textEditingController.text != '' &&
-                                  _textEditingController2.text != null &&
-                                  _textEditingController2.text != '') {
-                                _generateBarCode('WIFI:' + _textEditingController.text + ':' + _textEditingController2.text);
+                              print(_textEditingController!.text);
+                              if (_textEditingController!.text != null &&
+                                  _textEditingController!.text != '' &&
+                                  _textEditingController2!.text != null &&
+                                  _textEditingController2!.text != '') {
+                                _generateBarCode('WIFI:' + _textEditingController!.text + ':' + _textEditingController2!.text);
                               }
                             },
                             child: _buildGenerateButton(),
@@ -98,7 +98,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
 
   final _databaseHelper = DatabaseHelper();
   void AddDatabese() async {
-    await _databaseHelper.insert(GenerateHistoryModel('Wi-Fi', 'WIFI:' + _textEditingController.text + ':' + _textEditingController2.text, bytes));
+    await _databaseHelper.insert(GenerateHistoryModel('Wi-Fi', 'WIFI:' + _textEditingController!.text + ':' + _textEditingController2!.text, bytes));
     setState(() {
       getHistory();
     });
@@ -245,7 +245,7 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(this.bytes);
+                                var result = await (ImageGallerySaver.saveImage(this.bytes));
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, 'Great', 'Saved');
                                 } else {

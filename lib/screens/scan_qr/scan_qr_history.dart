@@ -5,7 +5,7 @@ import '../../utils/db_scan_history.dart';
 
 // ignore: must_be_immutable
 class ScanQrHistory extends StatefulWidget {
-  List history;
+  List? history;
   ScanQrHistory({history});
 
   @override
@@ -57,15 +57,15 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
               ),
             )
           : ListView.builder(
-              itemCount: widget.history.length,
+              itemCount: widget.history!.length,
               itemBuilder: (context, index) {
                 return Card(
                   color: Color(0xff325CFD),
                   child: ListTile(
                     onTap: () {},
-                    leading: Image.memory(widget.history[index].photo),
+                    leading: Image.memory(widget.history![index].photo),
                     title: Text(
-                      widget.history[index].text,
+                      widget.history![index].text,
                       style: TextStyle(color: Colors.white),
                     ),
                     subtitle: Row(
@@ -76,12 +76,12 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
                               color: Colors.white,
                             ),
                             onPressed: () async {
-                              if (widget.history[index].photo != null) {
+                              if (widget.history![index].photo != null) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',
                                     mimeType: 'image/png',
-                                    bytesOfFile: widget.history[index].photo);
+                                    bytesOfFile: widget.history![index].photo);
                               }
                             })
                       ],
@@ -93,7 +93,7 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
                         ),
                         onPressed: () async {
                           await _databaseHelper
-                              .deleteForScan(widget.history[index].id);
+                              .deleteForScan(widget.history![index].id);
                           setState(() {
                             getHistory();
                           });

@@ -19,7 +19,7 @@ class ShowDeatilsScan extends StatefulWidget {
 }
 
 class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
-  TextEditingController _outputController;
+  TextEditingController? _outputController;
 
   String link = '';
   final urlRegExp = RegExp(
@@ -29,7 +29,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
 
   final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
 
-  Uint8List bytes;
+  Uint8List? bytes;
 
   final DbScanHistory _databaseHelper = DbScanHistory();
 
@@ -66,13 +66,13 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
     _generateBarCode();
     _outputController = TextEditingController();
     setState(() {
-      _outputController.text = widget.result;
+      _outputController!.text = widget.result;
 
-      if (_outputController.text.startsWith(urlRegExp)) {
+      if (_outputController!.text.startsWith(urlRegExp)) {
         link = 'Url';
-      } else if (_outputController.text.startsWith(emailRegExp)) {
+      } else if (_outputController!.text.startsWith(emailRegExp)) {
         link = 'E-Mail';
-      } else if (_outputController.text.startsWith(telNumberRegExp)) {
+      } else if (_outputController!.text.startsWith(telNumberRegExp)) {
         link = 'Telephone Number';
       }
     });
@@ -147,10 +147,10 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    if (_outputController.text != null &&
-                        _outputController.text != '') {
+                    if (_outputController!.text != null &&
+                        _outputController!.text != '') {
                       Clipboard.setData(
-                          ClipboardData(text: _outputController.text));
+                          ClipboardData(text: _outputController!.text));
                       showAlertDialog(context);
                     }
                   },
@@ -182,12 +182,12 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    final RenderBox box = context.findRenderObject();
-                    if (_outputController.text != null &&
-                        _outputController.text != '') {
-                      Share.share(_outputController.text,
+                    final RenderBox? box = context.findRenderObject() as RenderBox?;
+                    if (_outputController!.text != null &&
+                        _outputController!.text != '') {
+                      Share.share(_outputController!.text,
                           sharePositionOrigin:
-                              box.localToGlobal(Offset.zero) & box.size);
+                              box!.localToGlobal(Offset.zero) & box.size);
                     }
                   },
                   child: Center(
@@ -223,7 +223,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    launch(_outputController.text);
+                    launch(_outputController!.text);
                   },
                   child: Center(
                       child: Row(
@@ -256,7 +256,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 child: InkWell(
                   onTap: () {
                     launch('https://www.google.com/search?q=' +
-                        _outputController.text);
+                        _outputController!.text);
                   },
                   child: Center(
                       child: Row(

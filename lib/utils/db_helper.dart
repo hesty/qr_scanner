@@ -4,14 +4,14 @@ import 'package:sqflite/sqflite.dart';
 import '../models/generate_history_model.dart';
 
 class DatabaseHelper {
-  static Database _database;
+  static Database? _database;
   final String _generateTable = 'generate';
   final String _columnID = 'id';
   final String _columnType = 'type';
   final String _columnText = 'text';
   final String _columnPhoto = 'photo';
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
     _database ??= await initializeDatabase();
     return _database;
   }
@@ -23,13 +23,14 @@ class DatabaseHelper {
     return generateDb;
   }
 
-  void createDb(Database db, int version) async {
-    await db.execute('Create table $_generateTable($_columnID integer primary key,$_columnType text,$_columnText text,$_columnPhoto blob)');
+  Future<void> createDb(Database db, int version) async {
+    await db.execute(
+        'Create table $_generateTable($_columnID integer primary key,$_columnType text,$_columnText text,$_columnPhoto blob)');
   }
 
   Future<List<GenerateHistoryModel>> getGenereteHistory() async {
     var db = await database;
-    var result = await db.query('$_generateTable');
+    var result = await db!.query('$_generateTable');
     return List.generate(result.length, (i) {
       return GenerateHistoryModel.fromMap(result[i]);
     });
@@ -37,14 +38,14 @@ class DatabaseHelper {
 
   Future<int> insert(GenerateHistoryModel historyModel) async {
     var db = await database;
-    var result = await db.insert('$_generateTable', historyModel.toMap());
+    var result = await db!.insert('$_generateTable', historyModel.toMap());
 
     return result;
   }
 
-  Future<int> delete(int id) async {
-    var db = await database;
-    var result = await db.rawDelete('delete from $_generateTable where id=$id');
+  Future<int> delete(int? id) async {
+    var db = await database ;
+    var result = await db!.rawDelete('delete from $_generateTable where id=$id');
     return result;
   }
 }

@@ -10,16 +10,16 @@ import '../../models/generate_history_model.dart';
 import '../../utils/db_helper.dart';
 
 class GenerateMap extends StatefulWidget {
-  GenerateMap({Key key}) : super(key: key);
+  GenerateMap({Key? key}) : super(key: key);
 
   @override
   _GenerateMapState createState() => _GenerateMapState();
 }
 
 class _GenerateMapState extends State<GenerateMap> {
-  TextEditingController _textEditingController;
-  TextEditingController _textEditingController2;
-  TextEditingController _textEditingController3;
+  TextEditingController? _textEditingController;
+  TextEditingController? _textEditingController2;
+  TextEditingController? _textEditingController3;
   bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
   @override
@@ -68,19 +68,19 @@ class _GenerateMapState extends State<GenerateMap> {
                           color: Colors.white.withOpacity(0.0),
                           child: InkWell(
                             onTap: () {
-                              print(_textEditingController.text);
-                              if (_textEditingController.text != null &&
-                                  _textEditingController.text != '' &&
-                                  _textEditingController2.text != null &&
-                                  _textEditingController2.text != '' &&
-                                  _textEditingController3.text != null &&
-                                  _textEditingController3.text != '') {
+                              print(_textEditingController!.text);
+                              if (_textEditingController!.text != null &&
+                                  _textEditingController!.text != '' &&
+                                  _textEditingController2!.text != null &&
+                                  _textEditingController2!.text != '' &&
+                                  _textEditingController3!.text != null &&
+                                  _textEditingController3!.text != '') {
                                 _generateBarCode('o:' +
-                                    _textEditingController.text +
+                                    _textEditingController!.text +
                                     '.0,' +
-                                    _textEditingController2.text +
+                                    _textEditingController2!.text +
                                     '.0?q=' +
-                                    _textEditingController3.text);
+                                    _textEditingController3!.text);
                               }
                             },
                             child: _buildGenerateButton(),
@@ -109,7 +109,7 @@ class _GenerateMapState extends State<GenerateMap> {
 
   void AddDatabese() async {
     await _databaseHelper.insert(GenerateHistoryModel(
-        'Map', 'o:' + _textEditingController.text + '.0,' + _textEditingController2.text + '.0?q=' + _textEditingController3.text, bytes));
+        'Map', 'o:' + _textEditingController!.text + '.0,' + _textEditingController2!.text + '.0?q=' + _textEditingController3!.text, bytes));
     setState(() {
       getHistory();
     });
@@ -270,7 +270,7 @@ class _GenerateMapState extends State<GenerateMap> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await ImageGallerySaver.saveImage(this.bytes);
+                                var result = await (ImageGallerySaver.saveImage(this.bytes));
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, 'Save', 'Successful');
                                 } else {

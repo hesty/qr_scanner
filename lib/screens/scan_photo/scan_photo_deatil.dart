@@ -16,7 +16,7 @@ class ScanPhotoDetail extends StatefulWidget {
 }
 
 class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
-  TextEditingController _outputController;
+  TextEditingController? _outputController;
 
   String link = '';
   final urlRegExp = RegExp(
@@ -34,7 +34,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
     var barcode = await scanner.scanPath(path);
     setState(() {
       if (barcode != null) {
-        _outputController.text = barcode;
+        _outputController!.text = barcode;
       }
     });
   }
@@ -45,13 +45,13 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
     _outputController = TextEditingController();
     _scanPath();
     setState(() {
-      _outputController.text = widget.result;
+      _outputController!.text = widget.result;
 
-      if (_outputController.text.startsWith(urlRegExp)) {
+      if (_outputController!.text.startsWith(urlRegExp)) {
         link = 'Url';
-      } else if (_outputController.text.startsWith(emailRegExp)) {
+      } else if (_outputController!.text.startsWith(emailRegExp)) {
         link = 'E-Mail';
-      } else if (_outputController.text.startsWith(telNumberRegExp)) {
+      } else if (_outputController!.text.startsWith(telNumberRegExp)) {
         link = 'Telephone Number';
       }
     });
@@ -107,10 +107,10 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      if (_outputController.text != null &&
-                          _outputController.text != '') {
+                      if (_outputController!.text != null &&
+                          _outputController!.text != '') {
                         Clipboard.setData(
-                            ClipboardData(text: _outputController.text));
+                            ClipboardData(text: _outputController!.text));
                         showAlertDialog(context);
                       }
                     },
@@ -142,12 +142,12 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      final RenderBox box = context.findRenderObject();
-                      if (_outputController.text != null &&
-                          _outputController.text != '') {
-                        Share.share(_outputController.text,
+                      final RenderBox? box = context.findRenderObject() as RenderBox?;
+                      if (_outputController!.text != null &&
+                          _outputController!.text != '') {
+                        Share.share(_outputController!.text,
                             sharePositionOrigin:
-                                box.localToGlobal(Offset.zero) & box.size);
+                                box!.localToGlobal(Offset.zero) & box.size);
                       }
                     },
                     child: Center(
@@ -183,7 +183,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      launch(_outputController.text);
+                      launch(_outputController!.text);
                     },
                     child: Center(
                         child: Row(
@@ -216,7 +216,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   child: InkWell(
                     onTap: () {
                       launch('https://www.google.com/search?q=' +
-                          _outputController.text);
+                          _outputController!.text);
                     },
                     child: Center(
                         child: Row(

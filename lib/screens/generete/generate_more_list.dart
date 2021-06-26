@@ -6,7 +6,7 @@ import 'generete_map.dart';
 import 'qenerate_mail.dart';
 
 class GenerateMoreList extends StatefulWidget {
-  GenerateMoreList({Key key}) : super(key: key);
+  GenerateMoreList({Key? key}) : super(key: key);
 
   @override
   _GenerateMoreListState createState() => _GenerateMoreListState();
