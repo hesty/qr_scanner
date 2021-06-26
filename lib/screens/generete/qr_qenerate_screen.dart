@@ -267,7 +267,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
             Icons.text_fields,
             color: Colors.white,
           ),
-          hintText: 'Please Input Your Code',
+          hintText: 'Please Input Your Text',
           hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
         ),
       ),

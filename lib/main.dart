@@ -26,12 +26,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomaScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _HomaScreenState createState() => _HomaScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomaScreenState extends State<HomaScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 1;
 
   final List<Widget> children = [
