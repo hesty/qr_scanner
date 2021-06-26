@@ -1,9 +1,7 @@
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_scanner/services/adver_service.dart';
-import 'package:qr_scanner/utils/db_scan_history.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
+
+import '../../utils/db_scan_history.dart';
 
 // ignore: must_be_immutable
 class ScanQrHistory extends StatefulWidget {
@@ -16,13 +14,6 @@ class ScanQrHistory extends StatefulWidget {
 
 class _ScanQrHistoryState extends State<ScanQrHistory> {
   final DbScanHistory _databaseHelper = DbScanHistory();
-
-  final AdvertService _advertService = AdvertService();
-
-  Future adsk() async {
-    await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
-  }
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getScanHistory();
@@ -38,7 +29,6 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
   void initState() {
     super.initState();
     getHistory();
-    _advertService.disposeAllAdverTop();
   }
 
   @override
@@ -54,7 +44,11 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        title: Text('Scan Qr History', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+        title: Text('Scan Qr History',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.bold)),
       ),
       body: widget.history == null
           ? Center(
@@ -84,7 +78,10 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
                             onPressed: () async {
                               if (widget.history[index].photo != null) {
                                 await WcFlutterShare.share(
-                                    sharePopupTitle: 'share', fileName: 'share.png', mimeType: 'image/png', bytesOfFile: widget.history[index].photo);
+                                    sharePopupTitle: 'share',
+                                    fileName: 'share.png',
+                                    mimeType: 'image/png',
+                                    bytesOfFile: widget.history[index].photo);
                               }
                             })
                       ],
@@ -95,7 +92,8 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
                           color: Colors.white,
                         ),
                         onPressed: () async {
-                          await _databaseHelper.deleteForScan(widget.history[index].id);
+                          await _databaseHelper
+                              .deleteForScan(widget.history[index].id);
                           setState(() {
                             getHistory();
                           });

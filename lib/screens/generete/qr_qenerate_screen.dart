@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_scanner/models/generate_history_model.dart';
-import 'package:qr_scanner/screens/generete/generate_history.dart';
-import 'package:qr_scanner/screens/generete/generate_more_list.dart';
-import 'package:qr_scanner/screens/generete/generate_phone.dart';
-import 'package:qr_scanner/screens/generete/generete_url.dart';
-import 'package:qr_scanner/services/adver_service.dart';
-import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
+
+import '../../models/generate_history_model.dart';
+import '../../utils/db_helper.dart';
+import 'generate_history.dart';
+import 'generate_more_list.dart';
+import 'generate_phone.dart';
+import 'generete_url.dart';
 
 class QrGenerateScreen extends StatefulWidget {
   QrGenerateScreen({key}) : super(key: key);
@@ -40,16 +40,14 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
   }
 
   Uint8List bytes = Uint8List(0);
-  final AdvertService _advertService = AdvertService();
   TabController tabController;
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(vsync: this, initialIndex: 0, length: 4);
-    _inputController =  TextEditingController();
-    _advertService.disposeAllAdverBottom();
-    _advertService.disposeAllAdverTop();
+    _inputController = TextEditingController();
+
     getHistory();
   }
 
@@ -164,7 +162,8 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => setState(() => this.bytes = Uint8List(0)),
+                              onTap: () =>
+                                  setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
@@ -238,8 +237,8 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
   }
 
   void AddDatabese() async {
-    await _databaseHelper.insert(
-        GenerateHistoryModel('Text', _inputController.text, bytes));
+    await _databaseHelper
+        .insert(GenerateHistoryModel('Text', _inputController.text, bytes));
     setState(() {
       getHistory();
     });

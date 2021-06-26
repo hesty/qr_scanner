@@ -1,11 +1,8 @@
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_scanner/services/adver_service.dart';
-import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
-// ignore: must_be_immutable
+import '../../utils/db_helper.dart';
+
 class GenerateHistory extends StatefulWidget {
   List history;
   GenerateHistory(this.history);
@@ -15,13 +12,6 @@ class GenerateHistory extends StatefulWidget {
 }
 
 class _GenerateHistoryState extends State<GenerateHistory> {
-  final AdvertService _advertService = AdvertService();
-
-  Future adsk() async {
-    await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
-  }
-
   final DatabaseHelper _databaseHelper = DatabaseHelper();
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
@@ -37,15 +27,6 @@ class _GenerateHistoryState extends State<GenerateHistory> {
   void initState() {
     super.initState();
     getHistory();
-    _advertService.disposeAllAdverTop();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    setState(() {
-      _advertService.disposeAllAdverTop();
-    });
   }
 
   @override
@@ -55,7 +36,11 @@ class _GenerateHistoryState extends State<GenerateHistory> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        title: Text('Generete History', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+        title: Text('Generete History',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.bold)),
       ),
       body: ListView.builder(
         itemCount: widget.history.length,
@@ -85,7 +70,10 @@ class _GenerateHistoryState extends State<GenerateHistory> {
                       onPressed: () async {
                         if (widget.history[index].photo != null) {
                           await WcFlutterShare.share(
-                              sharePopupTitle: 'share', fileName: 'share.png', mimeType: 'image/png', bytesOfFile: widget.history[index].photo);
+                              sharePopupTitle: 'share',
+                              fileName: 'share.png',
+                              mimeType: 'image/png',
+                              bytesOfFile: widget.history[index].photo);
                         }
                       })
                 ],

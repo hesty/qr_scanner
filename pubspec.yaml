@@ -12,10 +12,6 @@ dependencies:
     sdk: flutter
   custom_navigation_bar: ^0.6.0
   extended_image: ^1.5.0
-  firebase_admob: ^0.10.3
-  firebase_analytics: null
-  firebase_core: null
-  firebase_crashlytics: null
   flutter_icons: ^1.1.0
   fluttercontactpicker: ^4.2.1
   gallery_saver: ^2.0.1

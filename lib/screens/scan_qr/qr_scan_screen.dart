@@ -1,11 +1,9 @@
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_scanner/screens/scan_qr/scan_qr_history.dart';
-import 'package:qr_scanner/screens/scan_qr/show_scan_deatils.dart';
-import 'package:qr_scanner/services/adver_service.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+
+import 'scan_qr_history.dart';
+import 'show_scan_deatils.dart';
 
 class QrScanScreen extends StatefulWidget {
   QrScanScreen({key}) : super(key: key);
@@ -17,20 +15,10 @@ class QrScanScreen extends StatefulWidget {
 class _QrScanScreenState extends State<QrScanScreen> {
   TextEditingController _outputController;
 
-  final AdvertService _advertService = AdvertService();
-  Future adsk() async {
-    await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
-  }
-
   @override
   void initState() {
     super.initState();
     _outputController = TextEditingController();
-    adsk();
-    _advertService.disposeAllAdverBottom();
-    _advertService.disposeAllAdverTop();
-    _advertService.showBannerTop();
   }
 
   final key = GlobalKey<ScaffoldState>();
@@ -58,7 +46,10 @@ class _QrScanScreenState extends State<QrScanScreen> {
                       children: [
                         Text(
                           'Scan QR',
-                          style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold),
                         ),
                         Stack(
                           alignment: Alignment.topRight,
@@ -76,7 +67,11 @@ class _QrScanScreenState extends State<QrScanScreen> {
                                 padding: EdgeInsets.only(),
                                 tooltip: 'History',
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ScanQrHistory()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ScanQrHistory()));
                                 },
                                 icon: Icon(
                                   Icons.restore,
@@ -101,11 +96,16 @@ class _QrScanScreenState extends State<QrScanScreen> {
                               height: 60,
                               decoration: BoxDecoration(
                                   color: Color(0xff325CFD),
-                                  borderRadius: BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(15),
+                                      bottomLeft: Radius.circular(15))),
                               child: Center(
                                   child: Text(
                                 'SCAN QR',
-                                style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold),
                               )),
                             ),
                             onTap: () {
@@ -134,16 +134,12 @@ class _QrScanScreenState extends State<QrScanScreen> {
     } else {
       setState(() async {
         _outputController.text = barcode;
-        setState(() {
-          _advertService.disposeAllAdverTop();
-        });
-        await Navigator.push(context, MaterialPageRoute(builder: (context) => ShowDeatilsScan(_outputController.text))).then((value) {
-          //_advertService.disposeAllAdverTop();
-          _advertService.showBannerTop();
-          setState(() {
-            _advertService.disposeAllAdverBottom();
-          });
-        });
+        setState(() {});
+        await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ShowDeatilsScan(_outputController.text))).then((value) {});
       });
     }
   }
@@ -173,16 +169,13 @@ class _QrScanScreenState extends State<QrScanScreen> {
                     size: 20,
                   ),
                   onPressed: () async {
-                    if (_outputController.text != null && _outputController.text != '') {
-                      setState(() {
-                        _advertService.disposeAllAdverTop();
-                      });
-                      await Navigator.push(context, MaterialPageRoute(builder: (context) => ShowDeatilsScan(_outputController.text))).then((value) {
-                        _advertService.showBannerTop();
-                        setState(() {
-                          _advertService.disposeAllAdverBottom();
-                        });
-                      });
+                    if (_outputController.text != null &&
+                        _outputController.text != '') {
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ShowDeatilsScan(_outputController.text)));
                     } else {
                       showAlertDialog(context);
                     }

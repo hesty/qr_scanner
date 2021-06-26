@@ -1,20 +1,14 @@
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/material.dart';
-import 'package:qr_scanner/screens/generete/qr_qenerate_screen.dart';
-import 'package:qr_scanner/screens/scan_photo/scan_photo_screen.dart';
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:qr_scanner/screens/scan_qr/qr_scan_screen.dart';
-import 'package:qr_scanner/screens/splash_screen.dart';
+
+import 'screens/generete/qr_qenerate_screen.dart';
+import 'screens/scan_photo/scan_photo_screen.dart';
+import 'screens/scan_qr/qr_scan_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815');
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-
   runApp(MyApp());
 }
 
@@ -84,19 +78,16 @@ class _HomaScreenState extends State<HomaScreen> {
       items: [
         CustomNavigationBarItem(
           icon: Icon(Icons.add),
-          //title: Text("Generate QR")
         ),
         CustomNavigationBarItem(
           icon: Icon(
             Icons.qr_code,
           ),
-          //title: Text("Scan QR")
         ),
         CustomNavigationBarItem(
           icon: Icon(
             Icons.photo,
           ),
-          //title: Text("Scan Photo")
         ),
       ],
       onTap: onTappedBar,

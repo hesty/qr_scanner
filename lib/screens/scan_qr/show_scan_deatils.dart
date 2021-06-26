@@ -1,15 +1,14 @@
 import 'dart:typed_data';
-import 'package:qr_scanner/utils/db_scan_history.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_scanner/models/scan_history_model.dart';
-import 'package:qr_scanner/screens/scan_qr/scan_qr_history.dart';
-import 'package:qr_scanner/services/adver_service.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+import '../../models/scan_history_model.dart';
+import '../../utils/db_scan_history.dart';
+import 'scan_qr_history.dart';
 
 class ShowDeatilsScan extends StatefulWidget {
   final result;
@@ -20,14 +19,13 @@ class ShowDeatilsScan extends StatefulWidget {
 }
 
 class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
-  final ams = AdvertService();
-
   TextEditingController _outputController;
 
   String link = '';
-  final urlRegExp =
-      RegExp(r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
-  final emailRegExp = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final urlRegExp = RegExp(
+      r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
+  final emailRegExp = RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
 
@@ -78,23 +76,6 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
         link = 'Telephone Number';
       }
     });
-    adsk();
-    _advertService.showBannerBottom();
-    //getHistory();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    setState(() {
-      _advertService.disposeAllAdverTop();
-    });
-  }
-
-  final AdvertService _advertService = AdvertService();
-  Future adsk() async {
-    await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
   }
 
   @override
@@ -166,8 +147,10 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    if (_outputController.text != null && _outputController.text != '') {
-                      Clipboard.setData(ClipboardData(text: _outputController.text));
+                    if (_outputController.text != null &&
+                        _outputController.text != '') {
+                      Clipboard.setData(
+                          ClipboardData(text: _outputController.text));
                       showAlertDialog(context);
                     }
                   },
@@ -200,8 +183,11 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 child: InkWell(
                   onTap: () {
                     final RenderBox box = context.findRenderObject();
-                    if (_outputController.text != null && _outputController.text != '') {
-                      Share.share(_outputController.text, sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                    if (_outputController.text != null &&
+                        _outputController.text != '') {
+                      Share.share(_outputController.text,
+                          sharePositionOrigin:
+                              box.localToGlobal(Offset.zero) & box.size);
                     }
                   },
                   child: Center(
@@ -269,7 +255,8 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    launch('https://www.google.com/search?q=' + _outputController.text);
+                    launch('https://www.google.com/search?q=' +
+                        _outputController.text);
                   },
                   child: Center(
                       child: Row(

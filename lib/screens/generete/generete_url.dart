@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_scanner/models/generate_history_model.dart';
-import 'package:qr_scanner/services/adver_service.dart';
-import 'package:qr_scanner/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
+
+import '../../models/generate_history_model.dart';
+import '../../utils/db_helper.dart';
 
 class QrGenerateUrl extends StatefulWidget {
   QrGenerateUrl({key}) : super(key: key);
@@ -23,13 +23,11 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
 
   Uint8List bytes = Uint8List(0);
 
-  final _advertService = AdvertService();
 
   @override
   void initState() {
     super.initState();
     _inputController = TextEditingController();
-    _advertService.showIntesitial();
     getHistory();
   }
 

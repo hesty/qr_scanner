@@ -1,12 +1,9 @@
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_scanner/services/adver_service.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
 
 class ScanPhotoDetail extends StatefulWidget {
   final result;
@@ -22,9 +19,10 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   TextEditingController _outputController;
 
   String link = '';
-  final urlRegExp =
-      RegExp(r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
-  final emailRegExp = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final urlRegExp = RegExp(
+      r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
+  final emailRegExp = RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
   Future _scanPath() async {
@@ -56,26 +54,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
       } else if (_outputController.text.startsWith(telNumberRegExp)) {
         link = 'Telephone Number';
       }
-
-      _advertService.disposeAllAdverBottom();
-      _advertService.disposeAllAdverTop();
     });
-    adsk();
-
-    _advertService.showBannerBottom();
-  }
-
-  @override
-  void dispose() {
-    _advertService.disposeAllAdverBottom();
-    _advertService.disposeAllAdverTop();
-    super.dispose();
-  }
-
-  final AdvertService _advertService = AdvertService();
-  Future adsk() async {
-    await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-4694190778906605~9514991815', analyticsEnabled: true);
   }
 
   @override
@@ -128,8 +107,10 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      if (_outputController.text != null && _outputController.text != '') {
-                        Clipboard.setData(ClipboardData(text: _outputController.text));
+                      if (_outputController.text != null &&
+                          _outputController.text != '') {
+                        Clipboard.setData(
+                            ClipboardData(text: _outputController.text));
                         showAlertDialog(context);
                       }
                     },
@@ -162,8 +143,11 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   child: InkWell(
                     onTap: () {
                       final RenderBox box = context.findRenderObject();
-                      if (_outputController.text != null && _outputController.text != '') {
-                        Share.share(_outputController.text, sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                      if (_outputController.text != null &&
+                          _outputController.text != '') {
+                        Share.share(_outputController.text,
+                            sharePositionOrigin:
+                                box.localToGlobal(Offset.zero) & box.size);
                       }
                     },
                     child: Center(
@@ -231,7 +215,8 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      launch('https://www.google.com/search?q=' + _outputController.text);
+                      launch('https://www.google.com/search?q=' +
+                          _outputController.text);
                     },
                     child: Center(
                         child: Row(
