@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_scanner/core/utils/db_helper.dart';
+import 'package:qr_scanner/core/widget/button/standart_button.dart';
+import 'package:qr_scanner/core/widget/card/standart_card.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 import 'package:qr_scanner/core/extension/context_extension.dart';
@@ -19,14 +21,15 @@ class QrGeneratePhone extends StatefulWidget {
 }
 
 class _QrGeneratePhoneState extends State<QrGeneratePhone> {
-  TextEditingController? _inputController;
-  Uint8List bytes = Uint8List(0);
+  final TextEditingController _inputController = TextEditingController();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
   List allHistory = <GenerateHistoryModel>[];
+  Uint8List bytes = Uint8List(0);
+  TabController? tabController;
 
   @override
   void initState() {
     super.initState();
-    _inputController = TextEditingController();
     getHistory();
   }
 
@@ -38,262 +41,73 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
     );
   }
 
-  Widget _qrCodeWidget(Uint8List bytes, BuildContext context) {
-    return Padding(
-      padding: context.paddingLow,
-      child: Card(
-        elevation: 6,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              decoration: BoxDecoration(
-                color: Color(0xff325CFD),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4), topRight: Radius.circular(4)),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.18,
-                    child: bytes.isEmpty
-                        ? Center(
-                            child: Text('Empty Code',
-                                style: TextStyle(color: Colors.black38)),
-                          )
-                        : Image.memory(bytes),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 7, left: 25, right: 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Expanded(
-                          flex: 5,
-                          child: Material(
-                            color: Colors.white.withOpacity(0.0),
-                            child: InkWell(
-                              onTap: () =>
-                                  setState(() => this.bytes = Uint8List(0)),
-                              child: Center(
-                                child: Text(
-                                  'Remove',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Text('|',
-                            style:
-                                TextStyle(fontSize: 15, color: Colors.black26)),
-                        Expanded(
-                          flex: 5,
-                          child: Material(
-                            color: Colors.white.withOpacity(0.0),
-                            child: InkWell(
-                              onTap: () async {
-                                await Permission.storage.request();
-                                var result = await (ImageGallerySaver.saveImage(
-                                    this.bytes));
-                                if (result['isSuccess']) {
-                                  showAlertDialog(context, 'Great', 'Saved');
-                                } else {
-                                  showAlertDialog(
-                                      context, 'Error', 'Save failed!');
-                                }
-                              },
-                              child: Center(
-                                child: Text(
-                                  'Save',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Color(0xff325CFD)),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.share,
-                              color: Color(0xff325CFD),
-                            ),
-                            onPressed: () async {
-                              if (bytes != null) {
-                                await WcFlutterShare.share(
-                                    sharePopupTitle: 'share',
-                                    fileName: 'share.png',
-                                    mimeType: 'image/png',
-                                    bytesOfFile: bytes);
-                              }
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
+  Widget _buildBody() {
+    return SingleChildScrollView(
+      padding: context.paddingMedium,
+      child: Column(
+        children: [
+          StandartCard(byte: bytes),
+          SizedBox(
+            height: 16,
+          ),
+          _buildTextField(),
+          SizedBox(
+            height: 16,
+          ),
+          _buildStandartButton(),
+        ],
       ),
     );
-  }
-
-  Future _generateBarCode(String inputCode) async {
-    var result = await scanner.generateBarCode(inputCode);
-    setState(() => bytes = result);
-    AddDatabese();
-  }
-
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-  void AddDatabese() async {
-    await _databaseHelper
-        .insert(GenerateHistoryModel('Phone', _inputController!.text, bytes));
-    setState(() {
-      getHistory();
-    });
-  }
-
-  void getHistory() async {
-    var historyFuture = _databaseHelper.getGenereteHistory();
-
-    await historyFuture.then((data) {
-      setState(() {
-        allHistory = data;
-      });
-    });
   }
 
   Widget _buildTextField() {
-    return Stack(alignment: Alignment.centerRight, children: [
-      TextField(
-        onSubmitted: (value) {
-          _generateBarCode(value);
-        },
-        style: TextStyle(color: Colors.white),
-        controller: _inputController,
-        maxLines: 1,
-        keyboardType: TextInputType.phone,
-        textInputAction: TextInputAction.go,
-        cursorColor: Colors.white,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          prefixIcon: Icon(
-            Icons.phone,
+    return TextFormField(
+      style: TextStyle(color: Colors.white),
+      controller: _inputController,
+      maxLines: 1,
+      keyboardType: TextInputType.phone,
+      textInputAction: TextInputAction.go,
+      cursorColor: Colors.white,
+      decoration: InputDecoration(
+        prefixIcon: Icon(
+          Icons.phone,
+          color: Colors.white,
+        ),
+        suffixIcon: IconButton(
+          tooltip: 'Paste From Contact',
+          icon: Icon(
+            Icons.person_add,
             color: Colors.white,
           ),
-          hintText: '+90xxxxxxxxxx',
-          hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
+          onPressed: () async {
+            //await FlutterContactPicker.requestPermission();
+            //final contact = await FlutterContactPicker.pickPhoneContact();
+            //setState(() {
+            //  _inputController.text = contact.phoneNumber.number;
+            //});
+          },
         ),
+        hintText: '+90xxxxxxxxxx',
+        hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
       ),
-      Material(
-          color: Colors.white.withOpacity(0.0),
-          child: IconButton(
-            tooltip: 'Paste From Contact',
-            icon: Icon(
-              Icons.person_add,
-              color: Colors.white,
-            ),
-            onPressed: () async {
-              //await FlutterContactPicker.requestPermission();
-              //final contact = await FlutterContactPicker.pickPhoneContact();
-              //setState(() {
-              //  _inputController.text = contact.phoneNumber.number;
-              //});
-            },
-          )),
-    ]);
-  }
-
-  Container _buildGenerateButton() {
-    return Container(
-      width: 200,
-      height: 60,
-      decoration: BoxDecoration(
-          color: Color(0xff325CFD),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
-      child: Center(
-          child: Text(
-        'GENERATE QR',
-        style: TextStyle(
-            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
-      )),
     );
   }
 
-  Column _buildBody() {
-    return Column(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Container(
-            decoration: BoxDecoration(color: Color(0xff1D1F22)),
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _qrCodeWidget(bytes, context),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: _buildTextField(),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    //**build generate button
-                    Material(
-                      color: Colors.white.withOpacity(0.0),
-                      child: Ink(
-                        color: Colors.white.withOpacity(0.0),
-                        child: InkWell(
-                          onTap: () => _generateBarCode(_inputController!.text),
-                          child: _buildGenerateButton(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-      ],
-    );
+  Widget _buildStandartButton() {
+    return StandartButton(
+        title: 'GENERATE QR',
+        onTap: () {
+          _generateBarCode(_inputController.text);
+        });
   }
 
-  // ignore: always_declare_return_types
-  showAlertDialog(BuildContext context, String title, String message) {
+  void showAlertDialog(BuildContext context, String title, String message) {
     // set up the button
-    Widget okButton = FlatButton(
-      child: Text('OK'),
+    Widget okButton = TextButton(
       onPressed: () {
         Navigator.of(context).pop();
       },
+      child: Text('OK'),
     );
 
     // set up the AlertDialog
@@ -312,5 +126,28 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
         return alert;
       },
     );
+  }
+
+  Future<void> _generateBarCode(String inputCode) async {
+    var result = await scanner.generateBarCode(inputCode);
+    setState(() => bytes = result);
+    addDatabese();
+  }
+
+  void addDatabese() async {
+    await _databaseHelper
+        .insert(GenerateHistoryModel('Phone', _inputController.text, bytes));
+    setState(() {
+      getHistory();
+    });
+  }
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+    await historyFuture.then((data) {
+      setState(() {
+        allHistory = data;
+      });
+    });
   }
 }
