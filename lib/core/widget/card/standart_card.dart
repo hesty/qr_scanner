@@ -3,9 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_scanner/core/extension/context_extension.dart';
-
 import 'package:wc_flutter_share/wc_flutter_share.dart';
+
+import '../../extension/context_extension.dart';
 
 // ignore: must_be_immutable
 class StandartCard extends StatefulWidget {

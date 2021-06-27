@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:qr_scanner/core/init/theme/dark/dark_theme_interface.dart';
-import 'package:qr_scanner/core/init/theme/app_theme.dart';
+
+import 'app_theme.dart';
+import 'dark/dark_theme_interface.dart';
 
 class DarkTheme extends AppTheme with IDarkTheme {
   static DarkTheme? _instance;
@@ -25,6 +26,7 @@ class DarkTheme extends AppTheme with IDarkTheme {
 
   InputDecorationTheme get _inputDecorationTheme => InputDecorationTheme(
         hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
+        labelStyle: TextStyle(color: Colors.grey),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
             borderSide: BorderSide(color: Colors.white)),

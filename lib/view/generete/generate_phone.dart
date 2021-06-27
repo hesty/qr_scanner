@@ -2,15 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_scanner/core/utils/db_helper.dart';
-import 'package:qr_scanner/core/widget/button/standart_button.dart';
-import 'package:qr_scanner/core/widget/card/standart_card.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
-import 'package:wc_flutter_share/wc_flutter_share.dart';
-import 'package:qr_scanner/core/extension/context_extension.dart';
 
+import '../../core/extension/context_extension.dart';
+import '../../core/utils/db_helper.dart';
+import '../../core/widget/button/standart_button.dart';
+import '../../core/widget/card/standart_card.dart';
 import '../../models/generate_history_model.dart';
 
 class QrGeneratePhone extends StatefulWidget {

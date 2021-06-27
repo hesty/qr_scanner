@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
-import 'package:qr_scanner/models/generate_history_model.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../../models/generate_history_model.dart';
 
 class DatabaseHelper {
   static Database? _database;

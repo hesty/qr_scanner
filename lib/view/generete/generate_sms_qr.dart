@@ -3,10 +3,10 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_scanner/core/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
+import '../../core/utils/db_helper.dart';
 import '../../models/generate_history_model.dart';
 
 class GenerateSmsQr extends StatefulWidget {
