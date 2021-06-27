@@ -3,67 +3,116 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/core/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
 import '../../models/generate_history_model.dart';
-import '../../utils/db_helper.dart';
 
-class GenerateSmsQr extends StatefulWidget {
-  GenerateSmsQr({Key? key}) : super(key: key);
+class GenerateWifiQr extends StatefulWidget {
+  GenerateWifiQr({Key? key}) : super(key: key);
 
   @override
-  _GenerateSmsQrState createState() => _GenerateSmsQrState();
+  _GenerateWifiQrState createState() => _GenerateWifiQrState();
 }
 
-class _GenerateSmsQrState extends State<GenerateSmsQr> {
+class _GenerateWifiQrState extends State<GenerateWifiQr> {
   TextEditingController? _textEditingController;
   TextEditingController? _textEditingController2;
+  bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
+  final _databaseHelper = DatabaseHelper();
+  List allHistory = <GenerateHistoryModel>[];
+
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
     _textEditingController2 = TextEditingController();
+    getHistory();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xff1D1F22),
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text('Sms'),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-        ),
-        body: _buildBody());
+      backgroundColor: Color(0xff1D1F22),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Wi-Fi'),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Container(
+              decoration: BoxDecoration(color: Color(0xff1D1F22)),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 15),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _qrCodeWidget(bytes, context),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: _buildTextField(),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      //**build generate button
+                      Material(
+                        color: Colors.white.withOpacity(0.0),
+                        child: Ink(
+                          color: Colors.white.withOpacity(0.0),
+                          child: InkWell(
+                            onTap: () {
+                              if (_textEditingController!.text.isNotEmpty &&
+                                  _textEditingController!.text.isNotEmpty &&
+                                  _textEditingController2!.text.isNotEmpty &&
+                                  _textEditingController2!.text.isNotEmpty) {
+                                _generateBarCode('WIFI:' +
+                                    _textEditingController!.text +
+                                    ':' +
+                                    _textEditingController2!.text);
+                              }
+                            },
+                            child: _buildGenerateButton(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future _generateBarCode(String inputCode) async {
-    var result = await scanner.generateBarCode(inputCode);
-    setState(() {
-      bytes = result;
-      AddDatabese();
-    });
+    final result = await scanner.generateBarCode(inputCode);
+    setState(() => bytes = result);
+    await addDatabese();
   }
 
-  void AddDatabese() async {
+  Future<void> addDatabese() async {
     await _databaseHelper.insert(GenerateHistoryModel(
-        'Sms',
-        'sms:' +
+        'Wi-Fi',
+        'WIFI:' +
             _textEditingController!.text +
-            '?body=' +
+            ':' +
             _textEditingController2!.text,
         bytes));
     setState(() {
       getHistory();
     });
   }
-
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-
-  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
@@ -82,7 +131,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
       decoration: BoxDecoration(
           color: Color(0xff325CFD),
           borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+              topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
       child: Center(
           child: Text(
         'GENERATE QR',
@@ -98,36 +147,21 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
       child: Column(
         children: [
           TextField(
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.url,
             textInputAction: TextInputAction.go,
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white),
             controller: _textEditingController,
             decoration: InputDecoration(
-              suffixIcon: IconButton(
-                tooltip: 'Paste From Contact',
-                icon: Icon(
-                  Icons.person_add,
-                  color: Colors.white,
-                ),
-                onPressed: () async {
-                  // await FlutterContactPicker.requestPermission();
-                  // final contact =
-                  //     await FlutterContactPicker.pickPhoneContact();
-                  // setState(() {
-                  // _textEditingController.text = contact.phoneNumber.number;
-                  // });
-                },
-              ),
-              hintText: 'Number',
+              hintText: 'Wi-Fi Name',
               hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Number',
+              labelText: 'Name',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
               ),
               enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(5),
                   borderSide: BorderSide(color: Colors.white)),
             ),
           ),
@@ -135,16 +169,26 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
             height: 10.0,
           ),
           TextField(
-            keyboardType: TextInputType.text,
-            maxLines: 5,
+            keyboardType: TextInputType.url,
             textInputAction: TextInputAction.go,
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white),
+            obscureText: isPasswordVisible,
             controller: _textEditingController2,
             decoration: InputDecoration(
-              hintText: 'Body',
+              suffixIcon: IconButton(
+                icon: isPasswordVisible
+                    ? Icon(
+                        Icons.visibility_off,
+                        color: Colors.white,
+                      )
+                    : Icon(Icons.visibility, color: Colors.white),
+                onPressed: () =>
+                    setState(() => isPasswordVisible = !isPasswordVisible),
+              ),
+              hintText: 'Wi-Fi Password',
               hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Body',
+              labelText: 'Password',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -299,60 +343,6 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
       builder: (BuildContext context) {
         return alert;
       },
-    );
-  }
-
-  Widget _buildBody() {
-    return Column(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Container(
-            decoration: BoxDecoration(color: Color(0xff1D1F22)),
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _qrCodeWidget(bytes, context),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: _buildTextField(),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    //**build generate button
-                    Material(
-                      color: Colors.white.withOpacity(0.0),
-                      child: Ink(
-                        color: Colors.white.withOpacity(0.0),
-                        child: InkWell(
-                          onTap: () {
-                            print(_textEditingController!.text);
-                            if (_textEditingController!.text != null &&
-                                _textEditingController!.text != '' &&
-                                _textEditingController2!.text != null &&
-                                _textEditingController2!.text != '') {
-                              _generateBarCode('sms:' +
-                                  _textEditingController!.text +
-                                  '?body=' +
-                                  _textEditingController2!.text);
-                            }
-                          },
-                          child: _buildGenerateButton(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

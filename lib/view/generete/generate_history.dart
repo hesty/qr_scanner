@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:qr_scanner/core/utils/db_helper.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
-import '../../utils/db_helper.dart';
 
 class GenerateHistory extends StatefulWidget {
   List history;

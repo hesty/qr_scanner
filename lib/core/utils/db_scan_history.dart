@@ -1,7 +1,6 @@
 import 'package:path/path.dart';
+import 'package:qr_scanner/models/scan_history_model.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../models/scan_history_model.dart';
 
 class DbScanHistory {
   static Database? _database;

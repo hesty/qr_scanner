@@ -1,41 +1,159 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/core/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
 import '../../models/generate_history_model.dart';
-import '../../utils/db_helper.dart';
 
-class QrGenerateUrl extends StatefulWidget {
-  QrGenerateUrl({key}) : super(key: key);
+class GenerateSmsQr extends StatefulWidget {
+  GenerateSmsQr({Key? key}) : super(key: key);
 
   @override
-  _QrGenerateScreenState createState() => _QrGenerateScreenState();
+  _GenerateSmsQrState createState() => _GenerateSmsQrState();
 }
 
-class _QrGenerateScreenState extends State<QrGenerateUrl>
-    with SingleTickerProviderStateMixin {
-  TextEditingController? _inputController;
-
+class _GenerateSmsQrState extends State<GenerateSmsQr> {
+  TextEditingController? _textEditingController;
+  TextEditingController? _textEditingController2;
   Uint8List bytes = Uint8List(0);
-
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  List allHistory = <GenerateHistoryModel>[];
 
   @override
   void initState() {
     super.initState();
-    _inputController = TextEditingController();
-    getHistory();
+    _textEditingController = TextEditingController();
+    _textEditingController2 = TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1D1F22),
-      body: _buildBody(),
+        backgroundColor: Color(0xff1D1F22),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Sms'),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: _buildBody());
+  }
+
+  Future _generateBarCode(String inputCode) async {
+    var result = await scanner.generateBarCode(inputCode);
+    setState(() {
+      bytes = result;
+      AddDatabese();
+    });
+  }
+
+  void AddDatabese() async {
+    await _databaseHelper.insert(GenerateHistoryModel(
+        'Sms',
+        'sms:' +
+            _textEditingController!.text +
+            '?body=' +
+            _textEditingController2!.text,
+        bytes));
+    setState(() {
+      getHistory();
+    });
+  }
+
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+    await historyFuture.then((data) {
+      setState(() {
+        allHistory = data;
+      });
+    });
+  }
+
+  Container _buildGenerateButton() {
+    return Container(
+      width: 200,
+      height: 60,
+      decoration: BoxDecoration(
+          color: Color(0xff325CFD),
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+      child: Center(
+          child: Text(
+        'GENERATE QR',
+        style: TextStyle(
+            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+      )),
+    );
+  }
+
+  Padding _buildTextField() {
+    return Padding(
+      padding: EdgeInsets.all(2),
+      child: Column(
+        children: [
+          TextField(
+            keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.go,
+            cursorColor: Colors.white,
+            style: TextStyle(color: Colors.white),
+            controller: _textEditingController,
+            decoration: InputDecoration(
+              suffixIcon: IconButton(
+                tooltip: 'Paste From Contact',
+                icon: Icon(
+                  Icons.person_add,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  // await FlutterContactPicker.requestPermission();
+                  // final contact =
+                  //     await FlutterContactPicker.pickPhoneContact();
+                  // setState(() {
+                  // _textEditingController.text = contact.phoneNumber.number;
+                  // });
+                },
+              ),
+              hintText: 'Number',
+              hintStyle: TextStyle(color: Colors.grey),
+              labelText: 'Number',
+              labelStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          TextField(
+            keyboardType: TextInputType.text,
+            maxLines: 5,
+            textInputAction: TextInputAction.go,
+            cursorColor: Colors.white,
+            style: TextStyle(color: Colors.white),
+            controller: _textEditingController2,
+            decoration: InputDecoration(
+              hintText: 'Body',
+              hintStyle: TextStyle(color: Colors.grey),
+              labelText: 'Body',
+              labelStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -89,7 +207,8 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => setState(() => this.bytes = Uint8List(0)),
+                              onTap: () =>
+                                  setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
@@ -153,104 +272,35 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
     );
   }
 
-  Future _generateBarCode(String inputCode) async {
-    var result = await scanner.generateBarCode(inputCode);
-    setState(() {
-      bytes = result;
-      AddDatabese();
-    });
-  }
+  // ignore: always_declare_return_types
+  showAlertDialog(BuildContext context, String title, String message) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text('OK'),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
 
-  void AddDatabese() async {
-    await _databaseHelper
-        .insert(GenerateHistoryModel('Url', _inputController!.text, bytes));
-    setState(() {
-      getHistory();
-    });
-  }
-
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-
-  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
-
-  void getHistory() async {
-    var historyFuture = _databaseHelper.getGenereteHistory();
-
-    await historyFuture.then((data) {
-      setState(() {
-        allHistory = data;
-      });
-    });
-  }
-
-  Widget _buildTextField() {
-    return Stack(
-      alignment: Alignment.centerRight,
-      children: [
-        TextField(
-          onSubmitted: (value) {
-            _generateBarCode(value);
-          },
-          style: TextStyle(color: Colors.white),
-          controller: _inputController,
-          maxLines: 1,
-          keyboardType: TextInputType.url,
-          textInputAction: TextInputAction.go,
-          cursorColor: Colors.white,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            prefixIcon: Icon(
-              Icons.link,
-              color: Colors.white,
-            ),
-            hintText: 'http://aaaa.example.com',
-            hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
-          ),
-        ),
-        Material(
-          color: Colors.white.withOpacity(0.0),
-          child: IconButton(
-            tooltip: 'Paste to ClipBoard',
-            icon: Icon(
-              Icons.paste,
-              color: Colors.white,
-            ),
-            onPressed: () async {
-              var data = await Clipboard.getData('text/plain');
-              setState(() {
-                _inputController!.text = data!.text.toString();
-              });
-            },
-          ),
-        ),
+    // set up the AlertDialog
+    var alert = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        okButton,
       ],
     );
-  }
 
-  Container _buildGenerateButton() {
-    return Container(
-      width: 200,
-      height: 60,
-      decoration: BoxDecoration(
-          color: Color(0xff325CFD),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
-      child: Center(
-          child: Text(
-        'GENERATE QR',
-        style: TextStyle(
-            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
-      )),
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
-  Column _buildBody() {
+  Widget _buildBody() {
     return Column(
       children: [
         Expanded(
@@ -277,8 +327,18 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
                       child: Ink(
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
-                          onTap: () =>
-                              _generateBarCode(_inputController!.text),
+                          onTap: () {
+                            print(_textEditingController!.text);
+                            if (_textEditingController!.text != null &&
+                                _textEditingController!.text != '' &&
+                                _textEditingController2!.text != null &&
+                                _textEditingController2!.text != '') {
+                              _generateBarCode('sms:' +
+                                  _textEditingController!.text +
+                                  '?body=' +
+                                  _textEditingController2!.text);
+                            }
+                          },
                           child: _buildGenerateButton(),
                         ),
                       ),
@@ -290,36 +350,7 @@ class _QrGenerateScreenState extends State<QrGenerateUrl>
             ),
           ),
         ),
-        SizedBox(height: 10),
       ],
-    );
-  }
-
-  // ignore: always_declare_return_types
-  showAlertDialog(BuildContext context, String title, String message) {
-    // set up the button
-    Widget okButton = FlatButton(
-      child: Text('OK'),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    // set up the AlertDialog
-    var alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
     );
   }
 }

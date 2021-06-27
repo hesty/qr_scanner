@@ -1,7 +1,6 @@
 import 'package:path/path.dart';
+import 'package:qr_scanner/models/generate_history_model.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../models/generate_history_model.dart';
 
 class DatabaseHelper {
   static Database? _database;
@@ -44,8 +43,9 @@ class DatabaseHelper {
   }
 
   Future<int> delete(int? id) async {
-    var db = await database ;
-    var result = await db!.rawDelete('delete from $_generateTable where id=$id');
+    var db = await database;
+    var result =
+        await db!.rawDelete('delete from $_generateTable where id=$id');
     return result;
   }
 }

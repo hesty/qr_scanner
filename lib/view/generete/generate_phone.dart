@@ -4,130 +4,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/core/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
+import 'package:qr_scanner/core/extension/context_extension.dart';
 
 import '../../models/generate_history_model.dart';
-import '../../utils/db_helper.dart';
-import 'generate_history.dart';
-import 'generate_more_list.dart';
-import 'generate_phone.dart';
-import 'generete_url.dart';
 
-class QrGenerateScreen extends StatefulWidget {
-  QrGenerateScreen({key}) : super(key: key);
+class QrGeneratePhone extends StatefulWidget {
+  QrGeneratePhone({key}) : super(key: key);
 
   @override
-  _QrGenerateScreenState createState() => _QrGenerateScreenState();
+  _QrGeneratePhoneState createState() => _QrGeneratePhoneState();
 }
 
-class _QrGenerateScreenState extends State<QrGenerateScreen>
-    with SingleTickerProviderStateMixin {
+class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   TextEditingController? _inputController;
-
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-
-  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
-
-  void getHistory() async {
-    var historyFuture = _databaseHelper.getGenereteHistory();
-
-    await historyFuture.then((data) {
-      setState(() {
-        allHistory = data;
-      });
-    });
-  }
-
   Uint8List bytes = Uint8List(0);
-  TabController? tabController;
+  List allHistory = <GenerateHistoryModel>[];
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(vsync: this, initialIndex: 0, length: 4);
     _inputController = TextEditingController();
-
     getHistory();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Generate',
-          style: TextStyle(
-              color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'History',
-            icon: Icon(
-              Icons.history,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => GenerateHistory(allHistory)));
-            },
-          )
-        ],
-        elevation: 0,
-        // toolbarHeight: ,
-        backgroundColor: Colors.transparent,
-        bottom: TabBar(
-          labelColor: Colors.white,
-          controller: tabController,
-          indicatorColor: Color(0xff325CFD),
-          tabs: [
-            Tab(
-              text: 'Text',
-            ),
-            Tab(
-              text: 'Url',
-            ),
-            Tab(
-              text: 'Phone',
-            ),
-            Tab(
-              icon: Icon(Icons.menu),
-            ),
-          ],
-        ),
-      ),
       backgroundColor: Color(0xff1D1F22),
-      body: TabBarView(
-        controller: tabController,
-        children: [
-          _buildBody(),
-          QrGenerateUrl(),
-          QrGeneratePhone(),
-          GenerateMoreList(),
-        ],
-      ),
+      body: _buildBody(),
     );
   }
 
   Widget _qrCodeWidget(Uint8List bytes, BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: context.paddingLow,
       child: Card(
         elevation: 6,
         child: Column(
           children: <Widget>[
             Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: BoxDecoration(
                 color: Color(0xff325CFD),
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
               ),
             ),
             Padding(
@@ -154,6 +80,8 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                           child: Material(
                             color: Colors.white.withOpacity(0.0),
                             child: InkWell(
+                              onTap: () =>
+                                  setState(() => this.bytes = Uint8List(0)),
                               child: Center(
                                 child: Text(
                                   'Remove',
@@ -162,8 +90,6 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () =>
-                                  setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
@@ -177,7 +103,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                Map result = await (ImageGallerySaver.saveImage(
+                                var result = await (ImageGallerySaver.saveImage(
                                     this.bytes));
                                 if (result['isSuccess']) {
                                   showAlertDialog(context, 'Great', 'Saved');
@@ -229,17 +155,26 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
 
   Future _generateBarCode(String inputCode) async {
     var result = await scanner.generateBarCode(inputCode);
+    setState(() => bytes = result);
+    AddDatabese();
+  }
+
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  void AddDatabese() async {
+    await _databaseHelper
+        .insert(GenerateHistoryModel('Phone', _inputController!.text, bytes));
     setState(() {
-      bytes = result;
-      AddDatabese();
+      getHistory();
     });
   }
 
-  void AddDatabese() async {
-    await _databaseHelper
-        .insert(GenerateHistoryModel('Text', _inputController!.text, bytes));
-    setState(() {
-      getHistory();
+  void getHistory() async {
+    var historyFuture = _databaseHelper.getGenereteHistory();
+
+    await historyFuture.then((data) {
+      setState(() {
+        allHistory = data;
+      });
     });
   }
 
@@ -252,7 +187,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
         style: TextStyle(color: Colors.white),
         controller: _inputController,
         maxLines: 1,
-        keyboardType: TextInputType.text,
+        keyboardType: TextInputType.phone,
         textInputAction: TextInputAction.go,
         cursorColor: Colors.white,
         decoration: InputDecoration(
@@ -264,29 +199,29 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
             borderRadius: BorderRadius.circular(5),
           ),
           prefixIcon: Icon(
-            Icons.text_fields,
+            Icons.phone,
             color: Colors.white,
           ),
-          hintText: 'Please Input Your Text',
+          hintText: '+90xxxxxxxxxx',
           hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
         ),
       ),
       Material(
-        color: Colors.white.withOpacity(0.0),
-        child: IconButton(
-          tooltip: 'Paste to ClipBoard',
-          icon: Icon(
-            Icons.paste,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            var data = await Clipboard.getData('text/plain');
-            setState(() {
-              _inputController!.text = data!.text.toString();
-            });
-          },
-        ),
-      ),
+          color: Colors.white.withOpacity(0.0),
+          child: IconButton(
+            tooltip: 'Paste From Contact',
+            icon: Icon(
+              Icons.person_add,
+              color: Colors.white,
+            ),
+            onPressed: () async {
+              //await FlutterContactPicker.requestPermission();
+              //final contact = await FlutterContactPicker.pickPhoneContact();
+              //setState(() {
+              //  _inputController.text = contact.phoneNumber.number;
+              //});
+            },
+          )),
     ]);
   }
 
@@ -334,9 +269,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
                       child: Ink(
                         color: Colors.white.withOpacity(0.0),
                         child: InkWell(
-                          onTap: () async {
-                            await _generateBarCode(_inputController!.text);
-                          },
+                          onTap: () => _generateBarCode(_inputController!.text),
                           child: _buildGenerateButton(),
                         ),
                       ),
