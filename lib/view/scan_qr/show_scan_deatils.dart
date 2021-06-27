@@ -2,12 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_scanner/core/utils/db_scan_history.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/scan_history_model.dart';
-import '../../utils/db_scan_history.dart';
 import 'scan_qr_history.dart';
 
 class ShowDeatilsScan extends StatefulWidget {
@@ -33,7 +33,7 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
 
   final DbScanHistory _databaseHelper = DbScanHistory();
 
-  List<ScanHistoryModel> allHistory = <ScanHistoryModel>[];
+  List allHistory = <ScanHistoryModel>[];
 
   void AddDatabese() async {
     await _databaseHelper.insertForScan(ScanHistoryModel(widget.result, bytes));
@@ -182,7 +182,8 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    final RenderBox? box = context.findRenderObject() as RenderBox?;
+                    final RenderBox? box =
+                        context.findRenderObject() as RenderBox?;
                     if (_outputController!.text != null &&
                         _outputController!.text != '') {
                       Share.share(_outputController!.text,

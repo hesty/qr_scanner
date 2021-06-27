@@ -4,6 +4,7 @@ import 'generate_sms_qr.dart';
 import 'generate_wifi_qr.dart';
 import 'generete_map.dart';
 import 'qenerate_mail.dart';
+import 'package:qr_scanner/core/extension/context_extension.dart';
 
 class GenerateMoreList extends StatefulWidget {
   GenerateMoreList({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _GenerateMoreListState extends State<GenerateMoreList> {
 
   Widget _buildBody() {
     return Padding(
-      padding: EdgeInsets.all(3.0),
+      padding: context.paddingLow,
       child: SingleChildScrollView(
         child: Column(
           children: [

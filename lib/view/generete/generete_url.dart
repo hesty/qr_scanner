@@ -4,23 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/core/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
 import '../../models/generate_history_model.dart';
-import '../../utils/db_helper.dart';
 
-class QrGeneratePhone extends StatefulWidget {
-  QrGeneratePhone({key}) : super(key: key);
+class QrGenerateUrl extends StatefulWidget {
+  QrGenerateUrl({key}) : super(key: key);
 
   @override
-  _QrGeneratePhoneState createState() => _QrGeneratePhoneState();
+  _QrGenerateScreenState createState() => _QrGenerateScreenState();
 }
 
-class _QrGeneratePhoneState extends State<QrGeneratePhone> {
+class _QrGenerateScreenState extends State<QrGenerateUrl>
+    with SingleTickerProviderStateMixin {
   TextEditingController? _inputController;
 
   Uint8List bytes = Uint8List(0);
+
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  List allHistory =<GenerateHistoryModel>[];
 
   @override
   void initState() {
@@ -154,20 +159,19 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
 
   Future _generateBarCode(String inputCode) async {
     var result = await scanner.generateBarCode(inputCode);
-    setState(() => bytes = result);
-    AddDatabese();
+    setState(() {
+      bytes = result;
+      AddDatabese();
+    });
   }
 
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
   void AddDatabese() async {
     await _databaseHelper
-        .insert(GenerateHistoryModel('Phone', _inputController!.text, bytes));
+        .insert(GenerateHistoryModel('Url', _inputController!.text, bytes));
     setState(() {
       getHistory();
     });
   }
-
-  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
@@ -180,50 +184,53 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   }
 
   Widget _buildTextField() {
-    return Stack(alignment: Alignment.centerRight, children: [
-      TextField(
-        onSubmitted: (value) {
-          _generateBarCode(value);
-        },
-        style: TextStyle(color: Colors.white),
-        controller: _inputController,
-        maxLines: 1,
-        keyboardType: TextInputType.phone,
-        textInputAction: TextInputAction.go,
-        cursorColor: Colors.white,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        TextField(
+          onSubmitted: (value) {
+            _generateBarCode(value);
+          },
+          style: TextStyle(color: Colors.white),
+          controller: _inputController,
+          maxLines: 1,
+          keyboardType: TextInputType.url,
+          textInputAction: TextInputAction.go,
+          cursorColor: Colors.white,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            prefixIcon: Icon(
+              Icons.link,
+              color: Colors.white,
+            ),
+            hintText: 'http://aaaa.example.com',
+            hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          prefixIcon: Icon(
-            Icons.phone,
-            color: Colors.white,
-          ),
-          hintText: '+90xxxxxxxxxx',
-          hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
         ),
-      ),
-      Material(
+        Material(
           color: Colors.white.withOpacity(0.0),
           child: IconButton(
-            tooltip: 'Paste From Contact',
+            tooltip: 'Paste to ClipBoard',
             icon: Icon(
-              Icons.person_add,
+              Icons.paste,
               color: Colors.white,
             ),
             onPressed: () async {
-              //await FlutterContactPicker.requestPermission();
-              //final contact = await FlutterContactPicker.pickPhoneContact();
-              //setState(() {
-              //  _inputController.text = contact.phoneNumber.number;
-              //});
+              var data = await Clipboard.getData('text/plain');
+              setState(() {
+                _inputController!.text = data!.text.toString();
+              });
             },
-          )),
-    ]);
+          ),
+        ),
+      ],
+    );
   }
 
   Container _buildGenerateButton() {
@@ -233,7 +240,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
       decoration: BoxDecoration(
           color: Color(0xff325CFD),
           borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+              topRight: Radius.circular(5), bottomLeft: Radius.circular(5))),
       child: Center(
           child: Text(
         'GENERATE QR',

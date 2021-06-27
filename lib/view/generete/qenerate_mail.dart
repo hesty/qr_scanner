@@ -3,25 +3,30 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/core/utils/db_helper.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
 import '../../models/generate_history_model.dart';
-import '../../utils/db_helper.dart';
 
-class GenerateMap extends StatefulWidget {
-  GenerateMap({Key? key}) : super(key: key);
+class GenerateEmailQr extends StatefulWidget {
+  GenerateEmailQr({Key? key}) : super(key: key);
 
   @override
-  _GenerateMapState createState() => _GenerateMapState();
+  _GenerateEmailQrState createState() => _GenerateEmailQrState();
 }
 
-class _GenerateMapState extends State<GenerateMap> {
+class _GenerateEmailQrState extends State<GenerateEmailQr> {
   TextEditingController? _textEditingController;
   TextEditingController? _textEditingController2;
   TextEditingController? _textEditingController3;
   bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
+
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  List allHistory = <GenerateHistoryModel>[];
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +42,7 @@ class _GenerateMapState extends State<GenerateMap> {
       backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Map Coordinate'),
+        title: Text('E-Mail'),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -75,11 +80,11 @@ class _GenerateMapState extends State<GenerateMap> {
                                   _textEditingController2!.text != '' &&
                                   _textEditingController3!.text != null &&
                                   _textEditingController3!.text != '') {
-                                _generateBarCode('o:' +
+                                _generateBarCode('mailto:' +
                                     _textEditingController!.text +
-                                    '.0,' +
+                                    '?subject=' +
                                     _textEditingController2!.text +
-                                    '.0?q=' +
+                                    '&body=' +
                                     _textEditingController3!.text);
                               }
                             },
@@ -109,15 +114,18 @@ class _GenerateMapState extends State<GenerateMap> {
 
   void AddDatabese() async {
     await _databaseHelper.insert(GenerateHistoryModel(
-        'Map', 'o:' + _textEditingController!.text + '.0,' + _textEditingController2!.text + '.0?q=' + _textEditingController3!.text, bytes));
+        'E-Mail',
+        'mailto:' +
+            _textEditingController!.text +
+            '?subject=' +
+            _textEditingController2!.text +
+            '&body=' +
+            _textEditingController3!.text,
+        bytes));
     setState(() {
       getHistory();
     });
   }
-
-  final _databaseHelper = DatabaseHelper();
-
-  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
@@ -133,12 +141,15 @@ class _GenerateMapState extends State<GenerateMap> {
     return Container(
       width: 200,
       height: 60,
-      decoration:
-          BoxDecoration(color: Color(0xff325CFD), borderRadius: BorderRadius.only(topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
+      decoration: BoxDecoration(
+          color: Color(0xff325CFD),
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15), bottomLeft: Radius.circular(15))),
       child: Center(
           child: Text(
         'GENERATE QR',
-        style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+        style: TextStyle(
+            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
       )),
     );
   }
@@ -149,41 +160,22 @@ class _GenerateMapState extends State<GenerateMap> {
       child: Column(
         children: [
           TextField(
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.url,
             textInputAction: TextInputAction.go,
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white),
             controller: _textEditingController,
             decoration: InputDecoration(
-              hintText: 'Latitude',
+              hintText: 'E-Mail',
               hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Latitude',
+              labelText: 'Mail',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.white)),
-            ),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          TextField(
-            keyboardType: TextInputType.phone,
-            textInputAction: TextInputAction.go,
-            cursorColor: Colors.white,
-            style: TextStyle(color: Colors.white),
-            obscureText: isPasswordVisible,
-            controller: _textEditingController2,
-            decoration: InputDecoration(
-              hintText: 'Longitude',
-              hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Longitude',
-              labelStyle: TextStyle(color: Colors.grey),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.white)),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
             ),
           ),
           SizedBox(
@@ -195,16 +187,42 @@ class _GenerateMapState extends State<GenerateMap> {
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white),
             obscureText: isPasswordVisible,
-            controller: _textEditingController3,
+            controller: _textEditingController2,
             decoration: InputDecoration(
-              hintText: 'Query',
+              hintText: 'Subject',
               hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Query',
+              labelText: 'Subject',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.white)),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          TextField(
+            keyboardType: TextInputType.url,
+            textInputAction: TextInputAction.go,
+            cursorColor: Colors.white,
+            maxLines: 5,
+            style: TextStyle(color: Colors.white),
+            obscureText: isPasswordVisible,
+            controller: _textEditingController3,
+            decoration: InputDecoration(
+              hintText: 'Text',
+              hintStyle: TextStyle(color: Colors.grey),
+              labelText: 'Body',
+              labelStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
             ),
           ),
         ],
@@ -226,18 +244,21 @@ class _GenerateMapState extends State<GenerateMap> {
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
               decoration: BoxDecoration(
                 color: Color(0xff325CFD),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(4), topRight: Radius.circular(4)),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
+              padding:
+                  EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 10),
               child: Column(
                 children: <Widget>[
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.18,
                     child: bytes.isEmpty
                         ? Center(
-                            child: Text('Empty Code', style: TextStyle(color: Colors.black38)),
+                            child: Text('Empty Code',
+                                style: TextStyle(color: Colors.black38)),
                           )
                         : Image.memory(bytes),
                   ),
@@ -254,15 +275,19 @@ class _GenerateMapState extends State<GenerateMap> {
                               child: Center(
                                 child: Text(
                                   'Remove',
-                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(
+                                      fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () => setState(() => this.bytes = Uint8List(0)),
+                              onTap: () =>
+                                  setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
-                        Text('|', style: TextStyle(fontSize: 15, color: Colors.black26)),
+                        Text('|',
+                            style:
+                                TextStyle(fontSize: 15, color: Colors.black26)),
                         Expanded(
                           flex: 5,
                           child: Material(
@@ -270,9 +295,11 @@ class _GenerateMapState extends State<GenerateMap> {
                             child: InkWell(
                               onTap: () async {
                                 await Permission.storage.request();
-                                var result = await (ImageGallerySaver.saveImage(this.bytes));
+                                Map result = await (ImageGallerySaver.saveImage(
+                                    this.bytes));
                                 if (result['isSuccess']) {
-                                  showAlertDialog(context, 'Save', 'Successful');
+                                  showAlertDialog(
+                                      context, 'Save', 'Successful');
                                 } else {
                                   showAlertDialog(context, 'Save', 'Failed!');
                                 }
@@ -280,7 +307,8 @@ class _GenerateMapState extends State<GenerateMap> {
                               child: Center(
                                 child: Text(
                                   'Save',
-                                  style: TextStyle(fontSize: 15, color: Color(0xff325CFD)),
+                                  style: TextStyle(
+                                      fontSize: 15, color: Color(0xff325CFD)),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -297,7 +325,10 @@ class _GenerateMapState extends State<GenerateMap> {
                             onPressed: () async {
                               if (bytes != null) {
                                 await WcFlutterShare.share(
-                                    sharePopupTitle: 'share', fileName: 'share.png', mimeType: 'image/png', bytesOfFile: bytes);
+                                    sharePopupTitle: 'share',
+                                    fileName: 'share.png',
+                                    mimeType: 'image/png',
+                                    bytesOfFile: bytes);
                               }
                             },
                           ),

@@ -1,11 +1,11 @@
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_scanner/core/init/theme/dark_app_theme.dart';
+import 'package:qr_scanner/view/scan_photo/scan_photo_screen.dart';
+import 'package:qr_scanner/view/scan_qr/qr_scan_screen.dart';
+import 'package:qr_scanner/view/splash_screen.dart';
 
-import 'screens/generete/qr_qenerate_screen.dart';
-import 'screens/scan_photo/scan_photo_screen.dart';
-import 'screens/scan_qr/qr_scan_screen.dart';
-import 'screens/splash_screen.dart';
+import 'view/generete/qr_qenerate_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'QR & Barcode Scanner',
-      theme: ThemeData(
-        fontFamily: GoogleFonts.poppins().fontFamily,
-      ),
+      theme: DarkTheme.instance.theme,
       home: SplashScren(),
     );
   }
@@ -47,16 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var dynmcH = MediaQuery.of(context).size.height * 0.01;
-
     return Scaffold(
-      backgroundColor: Color(0xff1D1F22),
       body: children[_currentIndex],
       bottomNavigationBar: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: dynmcH),
-          child: _buildCustomNavigationBar(),
-        ),
+        child: _buildCustomNavigationBar(),
       ),
     );
   }
