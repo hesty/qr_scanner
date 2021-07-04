@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import 'base_view.dart';
 
-class SplashScren extends StatefulWidget {
-  SplashScren({Key? key}) : super(key: key);
+class SplashView extends StatefulWidget {
+  SplashView({Key? key}) : super(key: key);
 
   @override
-  _SplashScrenState createState() => _SplashScrenState();
+  _SplashViewState createState() => _SplashViewState();
 }
 
-class _SplashScrenState extends State<SplashScren> {
+class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
       Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (_) => HomeScreen()), (route) => false);
+          MaterialPageRoute(builder: (_) => BaseView()), (route) => false);
     });
   }
 

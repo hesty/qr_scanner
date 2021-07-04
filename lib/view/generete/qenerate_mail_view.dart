@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:qr_scanner/core/widget/button/standart_button.dart';
-import 'package:qr_scanner/core/widget/card/standart_card.dart';
-import 'package:qr_scanner/model/generate_history_model.dart';
-import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
-import '../../core/extension/context_extension.dart';
 
+import '../../core/extension/context_extension.dart';
 import '../../core/init/service/local_database/db_helper.dart';
+import '../../core/widget/button/standart_button.dart';
+import '../../core/widget/card/standart_card.dart';
+import '../../model/generate_history_model.dart';
+import '../_product/widget/normal_sized_box.dart';
 
 class GenerateEmailQr extends StatefulWidget {
   GenerateEmailQr({Key? key}) : super(key: key);
@@ -18,13 +18,13 @@ class GenerateEmailQr extends StatefulWidget {
 }
 
 class _GenerateEmailQrState extends State<GenerateEmailQr> {
-  final TextEditingController? _mailTextEditingController =
+  final TextEditingController _mailTextEditingController =
       TextEditingController();
 
-  final TextEditingController? _subjectTextEditingController =
+  final TextEditingController _subjectTextEditingController =
       TextEditingController();
 
-  final TextEditingController? _bodyTextEditingController =
+  final TextEditingController _bodyTextEditingController =
       TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -71,11 +71,11 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
             onTap: () {
               if (_formKey.currentState!.validate()) {
                 _generateBarCode('mailto:' +
-                    _mailTextEditingController!.text +
+                    _mailTextEditingController.text +
                     '?subject=' +
-                    _subjectTextEditingController!.text +
+                    _subjectTextEditingController.text +
                     '&body=' +
-                    _bodyTextEditingController!.text);
+                    _bodyTextEditingController.text);
               }
             })
       ],
@@ -141,11 +141,11 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
     await _databaseHelper.insert(GenerateHistoryModel(
         'E-Mail',
         'mailto:' +
-            _mailTextEditingController!.text +
+            _mailTextEditingController.text +
             '?subject=' +
-            _subjectTextEditingController!.text +
+            _subjectTextEditingController.text +
             '&body=' +
-            _bodyTextEditingController!.text,
+            _bodyTextEditingController.text,
         bytes));
 
     await getHistory();

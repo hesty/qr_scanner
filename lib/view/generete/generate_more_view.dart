@@ -16,100 +16,92 @@ class GenerateMoreList extends StatefulWidget {
 class _GenerateMoreListState extends State<GenerateMoreList> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Color(0xff1D1F22), body: _buildBody());
+    return Scaffold(body: _buildBody());
   }
 
   Widget _buildBody() {
-    return Padding(
+    return SingleChildScrollView(
       padding: context.paddingLow,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Divider(
-              color: Colors.white,
-            ),
-            Material(
-              color: Color(0xff325CFD),
-              child: ListTile(
-                leading: Icon(
-                  Icons.wifi,
-                  color: Colors.white,
-                ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GenerateWifiQr()));
-                },
-                title: Text(
-                  'Wi-Fi',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            Divider(
-              color: Colors.white,
-            ),
-            Material(
-              color: Color(0xff325CFD),
-              child: ListTile(
-                leading: Icon(
-                  Icons.email,
-                  color: Colors.white,
-                ),
-                // tileColor: Color(0xff325CFD),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GenerateEmailQr()));
-                },
-                title: Text('E-Mail', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-            Divider(
-              color: Colors.white,
-            ),
-            Material(
-              color: Color(0xff325CFD),
-              child: ListTile(
-                leading: Icon(
-                  Icons.place,
-                  color: Colors.white,
-                ),
-                //tileColor: Color(0xff325CFD),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => GenerateMap()));
-                },
-                title: Text('Map Coordinate',
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ),
-            Divider(
-              color: Colors.white,
-            ),
-            Material(
-              color: Color(0xff325CFD),
-              child: ListTile(
-                leading: Icon(
-                  Icons.sms,
-                  color: Colors.white,
-                ),
-                //tileColor: Color(0xff325CFD),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => GenerateSmsQr()));
-                },
-                title: Text('Sms', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-            Divider(
-              color: Colors.white,
-            ),
-          ],
-        ),
+      child: Column(
+        children: [
+          buildNavigateWifiListTile(),
+          _normalDiveder(),
+          buildNavigateEmailListTile(),
+          _normalDiveder(),
+          buildNavigateMapListTile(),
+          _normalDiveder(),
+          buildNavigateSmsListTile(),
+        ],
       ),
+    );
+  }
+
+  Widget buildNavigateEmailListTile() {
+    return ListTile(
+      tileColor: Color(0xff325CFD),
+      leading: Icon(
+        Icons.email,
+        color: Colors.white,
+      ),
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => GenerateEmailQr()));
+      },
+      title: Text('E-Mail', style: TextStyle(color: Colors.white)),
+    );
+  }
+
+  Widget buildNavigateMapListTile() {
+    return ListTile(
+      tileColor: Color(0xff325CFD),
+      leading: Icon(
+        Icons.place,
+        color: Colors.white,
+      ),
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => GenerateMap()));
+      },
+      title: Text('Map Coordinate', style: TextStyle(color: Colors.white)),
+    );
+  }
+
+  Widget buildNavigateSmsListTile() {
+    return ListTile(
+      tileColor: Color(0xff325CFD),
+      leading: Icon(
+        Icons.sms,
+        color: Colors.white,
+      ),
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => GenerateSmsQr()));
+      },
+      title: Text('Sms', style: TextStyle(color: Colors.white)),
+    );
+  }
+
+  Widget buildNavigateWifiListTile() {
+    return ListTile(
+      tileColor: Color(0xff325CFD),
+      leading: Icon(
+        Icons.wifi,
+        color: Colors.white,
+      ),
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => GenerateWifiQr()));
+      },
+      title: Text(
+        'Wi-Fi',
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _normalDiveder() {
+    return Divider(
+      color: Colors.white,
     );
   }
 }

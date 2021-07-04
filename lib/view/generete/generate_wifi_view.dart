@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:qr_scanner/model/generate_history_model.dart';
-import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
 import '../../core/init/service/local_database/db_helper.dart';
 import '../../core/widget/button/standart_button.dart';
 import '../../core/widget/card/standart_card.dart';
+import '../../model/generate_history_model.dart';
+import '../_product/widget/normal_sized_box.dart';
 
 class GenerateWifiQr extends StatefulWidget {
   GenerateWifiQr({Key? key}) : super(key: key);
@@ -20,19 +20,13 @@ class GenerateWifiQr extends StatefulWidget {
 class _GenerateWifiQrState extends State<GenerateWifiQr> {
   final TextEditingController _nameTextEdittingController =
       TextEditingController();
+
   final TextEditingController _passwordTextEdittingController =
       TextEditingController();
+
   final _databaseHelper = DatabaseHelper();
   bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
-
-  List allHistory = <GenerateHistoryModel>[];
-
-  @override
-  void initState() {
-    super.initState();
-    getHistory();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,19 +79,6 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
             ':' +
             _passwordTextEdittingController.text,
         bytes));
-    setState(() {
-      getHistory();
-    });
-  }
-
-  void getHistory() async {
-    var historyFuture = _databaseHelper.getGenereteHistory();
-
-    await historyFuture.then((data) {
-      setState(() {
-        allHistory = data;
-      });
-    });
   }
 
   Widget _buildTextFormFields() {

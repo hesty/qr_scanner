@@ -1,13 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:qr_scanner/core/widget/button/standart_button.dart';
-import 'package:qr_scanner/core/widget/card/standart_card.dart';
-import 'package:qr_scanner/model/generate_history_model.dart';
-import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
-import '../../core/init/service/local_database/db_helper.dart';
+
 import '../../core/extension/context_extension.dart';
+import '../../core/init/service/local_database/db_helper.dart';
+import '../../core/widget/button/standart_button.dart';
+import '../../core/widget/card/standart_card.dart';
+import '../../model/generate_history_model.dart';
+import '../_product/widget/normal_sized_box.dart';
 
 class GenerateSmsQr extends StatefulWidget {
   GenerateSmsQr({Key? key}) : super(key: key);

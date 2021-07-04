@@ -2,34 +2,31 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_scanner/model/generate_history_model.dart';
-import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
 import '../../core/init/service/local_database/db_helper.dart';
 import '../../core/widget/button/standart_button.dart';
 import '../../core/widget/card/standart_card.dart';
+import '../../model/generate_history_model.dart';
+import '../_product/widget/normal_sized_box.dart';
 
-class QrGeneratePhone extends StatefulWidget {
-  QrGeneratePhone({key}) : super(key: key);
+class GeneratePhoneView extends StatefulWidget {
+  GeneratePhoneView({key}) : super(key: key);
 
   @override
-  _QrGeneratePhoneState createState() => _QrGeneratePhoneState();
+  _GeneratePhoneViewState createState() => _GeneratePhoneViewState();
 }
 
-class _QrGeneratePhoneState extends State<QrGeneratePhone> {
-  final TextEditingController _inputController = TextEditingController();
+class _GeneratePhoneViewState extends State<GeneratePhoneView> {
+  final TextEditingController _phoneTextEditingController =
+      TextEditingController();
+
   final DatabaseHelper _databaseHelper = DatabaseHelper();
+
   List allHistory = <GenerateHistoryModel>[];
   Uint8List bytes = Uint8List(0);
   TabController? tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    getHistory();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +54,9 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   Widget _buildTextField() {
     return TextFormField(
       style: TextStyle(color: Colors.white),
-      controller: _inputController,
+      controller: _phoneTextEditingController,
       maxLines: 1,
       keyboardType: TextInputType.phone,
-      cursorColor: Colors.white,
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.phone,
@@ -85,7 +81,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
     return StandartButton(
         title: 'GENERATE QR',
         onTap: () {
-          _generateBarCode(_inputController.text);
+          _generateBarCode(_phoneTextEditingController.text);
         });
   }
 
@@ -96,19 +92,7 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
   }
 
   void addDatabese() async {
-    await _databaseHelper
-        .insert(GenerateHistoryModel('Phone', _inputController.text, bytes));
-    setState(() {
-      getHistory();
-    });
-  }
-
-  void getHistory() async {
-    var historyFuture = _databaseHelper.getGenereteHistory();
-    await historyFuture.then((data) {
-      setState(() {
-        allHistory = data;
-      });
-    });
+    await _databaseHelper.insert(
+        GenerateHistoryModel('Phone', _phoneTextEditingController.text, bytes));
   }
 }

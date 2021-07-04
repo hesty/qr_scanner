@@ -2,12 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_scanner/model/scan_history_model.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/init/service/local_database/scan_qr_db_serviece.dart';
+import '../../model/scan_history_model.dart';
 import 'scan_qr_history.dart';
 
 class ShowDeatilsScan extends StatefulWidget {
