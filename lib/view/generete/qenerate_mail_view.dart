@@ -31,11 +31,11 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
+  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
+
   bool isPasswordVisible = false;
 
   Uint8List bytes = Uint8List(0);
-
-  List allHistory = <GenerateHistoryModel>[];
 
   @override
   void initState() {
@@ -46,7 +46,6 @@ class _GenerateEmailQrState extends State<GenerateEmailQr> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
         centerTitle: true,
         title: Text('E-Mail'),

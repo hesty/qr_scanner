@@ -2,7 +2,7 @@ import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'core/init/theme/dark_app_theme.dart';
-import 'view/generete/qr_qenerate_screen.dart';
+import 'view/generete/qr_qenerate_base_screen.dart';
 import 'view/scan_photo/scan_photo_screen.dart';
 import 'view/scan_qr/qr_scan_screen.dart';
 import 'view/splash_screen.dart';
