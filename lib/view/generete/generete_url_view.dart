@@ -2,13 +2,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_scanner/model/generate_history_model.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
-import '../../core/utils/db_helper.dart';
+import '../../core/init/service/local_database/db_helper.dart';
 import '../../core/widget/button/standart_button.dart';
 import '../../core/widget/card/standart_card.dart';
-import '../../models/generate_history_model.dart';
 
 class QrGenerateUrl extends StatefulWidget {
   QrGenerateUrl({key}) : super(key: key);

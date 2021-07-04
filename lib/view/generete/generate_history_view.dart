@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
-import '../../core/utils/db_helper.dart';
+import '../../core/init/service/local_database/db_helper.dart';
 
 
 class GenerateHistory extends StatefulWidget {

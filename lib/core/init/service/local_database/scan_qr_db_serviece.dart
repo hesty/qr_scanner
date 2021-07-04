@@ -1,9 +1,8 @@
 import 'package:path/path.dart';
+import 'package:qr_scanner/model/scan_history_model.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../models/scan_history_model.dart';
-
-class DbScanHistory {
+class ScanQrHistoryDbService {
   static Database? _database;
 
   final String _scanTable = 'scan';
@@ -26,7 +25,8 @@ class DbScanHistory {
 
   void createDbForScan(Database db, int version) async {
     await db.execute(
-        'Create table $_scanTable($_columnID integer primary key,$_columnText text,$_columnPhoto blob)');
+      'Create table $_scanTable($_columnID integer primary key,$_columnText text,$_columnPhoto blob)',
+    );
   }
 
   Future<List<ScanHistoryModel>> getScanHistory() async {
@@ -39,7 +39,8 @@ class DbScanHistory {
 
   Future<int> insertForScan(ScanHistoryModel historyModel) async {
     var db = await database;
-    var result = await db!.insert('$_scanTable', historyModel.toMap());
+    var result = await db!.insert('$_scanTable', historyModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.ignore);
 
     return result;
   }

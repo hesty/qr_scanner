@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
-import '../../core/utils/db_scan_history.dart';
-
+import '../../core/init/service/local_database/scan_qr_db_serviece.dart';
 
 // ignore: must_be_immutable
 class ScanQrHistory extends StatefulWidget {
@@ -14,7 +13,7 @@ class ScanQrHistory extends StatefulWidget {
 }
 
 class _ScanQrHistoryState extends State<ScanQrHistory> {
-  final DbScanHistory _databaseHelper = DbScanHistory();
+  final ScanQrHistoryDbService _databaseHelper = ScanQrHistoryDbService();
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getScanHistory();
@@ -30,12 +29,6 @@ class _ScanQrHistoryState extends State<ScanQrHistory> {
   void initState() {
     super.initState();
     getHistory();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    setState(() {});
   }
 
   @override

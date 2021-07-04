@@ -2,13 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_scanner/model/generate_history_model.dart';
+import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
-import '../../core/utils/db_helper.dart';
+import '../../core/init/service/local_database/db_helper.dart';
 import '../../core/widget/button/standart_button.dart';
 import '../../core/widget/card/standart_card.dart';
-import '../../models/generate_history_model.dart';
 
 class QrGeneratePhone extends StatefulWidget {
   QrGeneratePhone({key}) : super(key: key);
@@ -44,13 +45,9 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
       child: Column(
         children: [
           StandartCard(byte: bytes),
-          SizedBox(
-            height: 16,
-          ),
+          NormalSizedBox(),
           _buildTextField(),
-          SizedBox(
-            height: 16,
-          ),
+          NormalSizedBox(),
           _buildStandartButton(),
         ],
       ),
@@ -63,7 +60,6 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
       controller: _inputController,
       maxLines: 1,
       keyboardType: TextInputType.phone,
-      textInputAction: TextInputAction.go,
       cursorColor: Colors.white,
       decoration: InputDecoration(
         prefixIcon: Icon(
@@ -77,15 +73,10 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
             color: Colors.white,
           ),
           onPressed: () async {
-            //await FlutterContactPicker.requestPermission();
-            //final contact = await FlutterContactPicker.pickPhoneContact();
-            //setState(() {
-            //  _inputController.text = contact.phoneNumber.number;
-            //});
+            //TODO: Connect your contact
           },
         ),
         hintText: '+90xxxxxxxxxx',
-        hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
       ),
     );
   }
@@ -96,33 +87,6 @@ class _QrGeneratePhoneState extends State<QrGeneratePhone> {
         onTap: () {
           _generateBarCode(_inputController.text);
         });
-  }
-
-  void showAlertDialog(BuildContext context, String title, String message) {
-    // set up the button
-    Widget okButton = TextButton(
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-      child: Text('OK'),
-    );
-
-    // set up the AlertDialog
-    var alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 
   Future<void> _generateBarCode(String inputCode) async {

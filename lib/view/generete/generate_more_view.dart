@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/extension/context_extension.dart';
-import 'generate_sms_qr.dart';
-import 'generate_wifi_qr.dart';
-import 'generete_map.dart';
-import 'qenerate_mail.dart';
+import 'generate_sms_view.dart';
+import 'generate_wifi_view.dart';
+import 'generete_map_view.dart';
+import 'qenerate_mail_view.dart';
 
 class GenerateMoreList extends StatefulWidget {
   GenerateMoreList({Key? key}) : super(key: key);

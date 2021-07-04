@@ -15,7 +15,6 @@ class ShowAlertDialog extends StatelessWidget {
   }
 
   AlertDialog _alertDialog(BuildContext context) {
-    print('deneme');
     return AlertDialog(
       title: Text(title),
       content: Text(message),

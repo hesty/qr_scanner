@@ -1,11 +1,11 @@
 import 'package:path/path.dart';
+import 'package:qr_scanner/model/generate_history_model.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../../models/generate_history_model.dart';
 
 class DatabaseHelper {
   static Database? _database;
   final String _generateTable = 'generate';
+  final String _columnID = 'id';
   final String _columnType = 'type';
   final String _columnText = 'text';
   final String _columnPhoto = 'photo';
@@ -24,7 +24,7 @@ class DatabaseHelper {
 
   Future<void> createDb(Database db, int version) async {
     await db.execute(
-        'Create table $_generateTable($_columnText text primary key,$_columnType text,$_columnPhoto blob)');
+        'Create table $_generateTable($_columnID integer primary key,$_columnType text,$_columnText text,$_columnPhoto blob)');
   }
 
   Future<List<GenerateHistoryModel>> getGenereteHistory() async {
@@ -37,8 +37,7 @@ class DatabaseHelper {
 
   Future<int> insert(GenerateHistoryModel historyModel) async {
     var db = await database;
-    var result = await db!.insert('$_generateTable', historyModel.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    var result = await db!.insert('$_generateTable', historyModel.toMap());
 
     return result;
   }

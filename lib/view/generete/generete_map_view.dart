@@ -3,44 +3,103 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/model/generate_history_model.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
-import '../../core/utils/db_helper.dart';
-import '../../models/generate_history_model.dart';
+import '../../core/init/service/local_database/db_helper.dart';
 
-class GenerateSmsQr extends StatefulWidget {
-  GenerateSmsQr({Key? key}) : super(key: key);
+class GenerateMap extends StatefulWidget {
+  GenerateMap({Key? key}) : super(key: key);
 
   @override
-  _GenerateSmsQrState createState() => _GenerateSmsQrState();
+  _GenerateMapState createState() => _GenerateMapState();
 }
 
-class _GenerateSmsQrState extends State<GenerateSmsQr> {
+class _GenerateMapState extends State<GenerateMap> {
   TextEditingController? _textEditingController;
   TextEditingController? _textEditingController2;
+  TextEditingController? _textEditingController3;
+  bool isPasswordVisible = false;
   Uint8List bytes = Uint8List(0);
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-  List allHistory = <GenerateHistoryModel>[];
 
+  final _databaseHelper = DatabaseHelper();
+
+  List allHistory =<GenerateHistoryModel> [];
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
     _textEditingController2 = TextEditingController();
+    _textEditingController3 = TextEditingController();
+    getHistory();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xff1D1F22),
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text('Sms'),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-        ),
-        body: _buildBody());
+      backgroundColor: Color(0xff1D1F22),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Map Coordinate'),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Container(
+              decoration: BoxDecoration(color: Color(0xff1D1F22)),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 15),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _qrCodeWidget(bytes, context),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: _buildTextField(),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      //**build generate button
+                      Material(
+                        color: Colors.white.withOpacity(0.0),
+                        child: Ink(
+                          color: Colors.white.withOpacity(0.0),
+                          child: InkWell(
+                            onTap: () {
+                              if (_textEditingController!.text.isNotEmpty &&
+                                  _textEditingController!.text.isNotEmpty &&
+                                  _textEditingController2!.text.isNotEmpty &&
+                                  _textEditingController2!.text.isNotEmpty &&
+                                  _textEditingController3!.text.isNotEmpty &&
+                                  _textEditingController3!.text.isNotEmpty) {
+                                _generateBarCode('o:' +
+                                    _textEditingController!.text +
+                                    '.0,' +
+                                    _textEditingController2!.text +
+                                    '.0?q=' +
+                                    _textEditingController3!.text);
+                              }
+                            },
+                            child: _buildGenerateButton(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future _generateBarCode(String inputCode) async {
@@ -53,11 +112,13 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
 
   void AddDatabese() async {
     await _databaseHelper.insert(GenerateHistoryModel(
-        'Sms',
-        'sms:' +
+        'Map',
+        'o:' +
             _textEditingController!.text +
-            '?body=' +
-            _textEditingController2!.text,
+            '.0,' +
+            _textEditingController2!.text +
+            '.0?q=' +
+            _textEditingController3!.text,
         bytes));
     setState(() {
       getHistory();
@@ -66,6 +127,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
 
   void getHistory() async {
     var historyFuture = _databaseHelper.getGenereteHistory();
+
     await historyFuture.then((data) {
       setState(() {
         allHistory = data;
@@ -102,24 +164,9 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
             style: TextStyle(color: Colors.white),
             controller: _textEditingController,
             decoration: InputDecoration(
-              suffixIcon: IconButton(
-                tooltip: 'Paste From Contact',
-                icon: Icon(
-                  Icons.person_add,
-                  color: Colors.white,
-                ),
-                onPressed: () async {
-                  // await FlutterContactPicker.requestPermission();
-                  // final contact =
-                  //     await FlutterContactPicker.pickPhoneContact();
-                  // setState(() {
-                  // _textEditingController.text = contact.phoneNumber.number;
-                  // });
-                },
-              ),
-              hintText: 'Number',
+              hintText: 'Latitude',
               hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Number',
+              labelText: 'Latitude',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -133,16 +180,39 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
             height: 10.0,
           ),
           TextField(
-            keyboardType: TextInputType.text,
-            maxLines: 5,
+            keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.go,
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white),
+            obscureText: isPasswordVisible,
             controller: _textEditingController2,
             decoration: InputDecoration(
-              hintText: 'Body',
+              hintText: 'Longitude',
               hintStyle: TextStyle(color: Colors.grey),
-              labelText: 'Body',
+              labelText: 'Longitude',
+              labelStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white)),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          TextField(
+            keyboardType: TextInputType.url,
+            textInputAction: TextInputAction.go,
+            cursorColor: Colors.white,
+            style: TextStyle(color: Colors.white),
+            obscureText: isPasswordVisible,
+            controller: _textEditingController3,
+            decoration: InputDecoration(
+              hintText: 'Query',
+              hintStyle: TextStyle(color: Colors.grey),
+              labelText: 'Query',
               labelStyle: TextStyle(color: Colors.grey),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -199,6 +269,8 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                           child: Material(
                             color: Colors.white.withOpacity(0.0),
                             child: InkWell(
+                              onTap: () =>
+                                  setState(() => this.bytes = Uint8List(0)),
                               child: Center(
                                 child: Text(
                                   'Remove',
@@ -207,8 +279,6 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              onTap: () =>
-                                  setState(() => this.bytes = Uint8List(0)),
                             ),
                           ),
                         ),
@@ -225,10 +295,10 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                                 var result = await (ImageGallerySaver.saveImage(
                                     this.bytes));
                                 if (result['isSuccess']) {
-                                  showAlertDialog(context, 'Great', 'Saved');
-                                } else {
                                   showAlertDialog(
-                                      context, 'Error', 'Save failed!');
+                                      context, 'Save', 'Successful');
+                                } else {
+                                  showAlertDialog(context, 'Save', 'Failed!');
                                 }
                               },
                               child: Center(
@@ -250,7 +320,7 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
                               color: Color(0xff325CFD),
                             ),
                             onPressed: () async {
-                              if (bytes != null) {
+                              if (bytes.isNotEmpty) {
                                 await WcFlutterShare.share(
                                     sharePopupTitle: 'share',
                                     fileName: 'share.png',
@@ -297,60 +367,6 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
       builder: (BuildContext context) {
         return alert;
       },
-    );
-  }
-
-  Widget _buildBody() {
-    return Column(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Container(
-            decoration: BoxDecoration(color: Color(0xff1D1F22)),
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _qrCodeWidget(bytes, context),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: _buildTextField(),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    //**build generate button
-                    Material(
-                      color: Colors.white.withOpacity(0.0),
-                      child: Ink(
-                        color: Colors.white.withOpacity(0.0),
-                        child: InkWell(
-                          onTap: () {
-                            print(_textEditingController!.text);
-                            if (_textEditingController!.text != null &&
-                                _textEditingController!.text != '' &&
-                                _textEditingController2!.text != null &&
-                                _textEditingController2!.text != '') {
-                              _generateBarCode('sms:' +
-                                  _textEditingController!.text +
-                                  '?body=' +
-                                  _textEditingController2!.text);
-                            }
-                          },
-                          child: _buildGenerateButton(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

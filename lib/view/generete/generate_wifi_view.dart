@@ -1,13 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:qr_scanner/model/generate_history_model.dart';
+import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
-import '../../core/utils/db_helper.dart';
+import '../../core/init/service/local_database/db_helper.dart';
 import '../../core/widget/button/standart_button.dart';
 import '../../core/widget/card/standart_card.dart';
-import '../../models/generate_history_model.dart';
 
 class GenerateWifiQr extends StatefulWidget {
   GenerateWifiQr({Key? key}) : super(key: key);
@@ -43,13 +44,9 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
         child: Column(
           children: [
             StandartCard(byte: bytes),
-            SizedBox(
-              height: 16,
-            ),
+            NormalSizedBox(),
             _buildTextFormFields(),
-            SizedBox(
-              height: 16,
-            ),
+            NormalSizedBox(),
             buildStandartButton(),
           ],
         ),
@@ -106,18 +103,15 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
   Widget _buildTextFormFields() {
     return Column(
       children: [
-        TextField(
+        TextFormField(
           style: TextStyle(color: Colors.white),
           controller: _nameTextEdittingController,
           decoration: InputDecoration(
             hintText: 'Wi-Fi Name',
             labelText: 'Name',
-            labelStyle: TextStyle(color: Colors.grey),
           ),
         ),
-        SizedBox(
-          height: 16.0,
-        ),
+        NormalSizedBox(),
         TextFormField(
           textInputAction: TextInputAction.go,
           cursorColor: Colors.white,
@@ -140,33 +134,6 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
           ),
         ),
       ],
-    );
-  }
-
-  void showAlertDialog(BuildContext context, String title, String message) {
-    // set up the button
-    Widget okButton = TextButton(
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-      child: Text('OK'),
-    );
-
-    // set up the AlertDialog
-    var alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
     );
   }
 }

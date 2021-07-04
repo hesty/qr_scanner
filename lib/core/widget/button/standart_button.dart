@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class StandartButton extends StatelessWidget {
-  final GestureTapCallback onTap;
+  final VoidCallback onTap;
   final String title;
 
   StandartButton({required this.title, required this.onTap});
