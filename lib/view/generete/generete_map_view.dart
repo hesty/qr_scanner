@@ -31,24 +31,16 @@ class _GenerateMapState extends State<GenerateMap> {
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  List<GenerateHistoryModel> allHistory = <GenerateHistoryModel>[];
-
   bool isPasswordVisible = false;
 
   Uint8List bytes = Uint8List(0);
-
-  @override
-  void initState() {
-    super.initState();
-    getHistory();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
-        padding: context.paddingNormal,
+        padding: context.paddingMedium,
         child: _buildBodyColumn(),
       ),
     );
@@ -148,13 +140,5 @@ class _GenerateMapState extends State<GenerateMap> {
             '.0?q=' +
             _queryTextEditingController!.text,
         bytes));
-    getHistory();
-  }
-
-  void getHistory() async {
-    var getHistoryList = await _databaseHelper.getGenereteHistory();
-    setState(() {
-      allHistory = getHistoryList;
-    });
   }
 }
