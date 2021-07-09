@@ -1,9 +1,9 @@
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-
-import 'generete/qr_qenerate_base_view.dart';
 import 'scan_photo/scan_photo_screen.dart';
 import 'scan_qr/qr_scan_screen.dart';
+
+import 'generete/qr_qenerate_base_view.dart';
 
 class BaseView extends StatefulWidget {
   BaseView({Key? key}) : super(key: key);
@@ -14,6 +14,20 @@ class BaseView extends StatefulWidget {
 
 class _BaseViewState extends State<BaseView> {
   int _currentIndex = 1;
+
+  Widget changeView() {
+    switch (_currentIndex) {
+      case 0:
+        return QrGenerateScreen();
+      case 1:
+        return QrScanScreen();
+      case 2:
+        return ScanPhotoScreen();
+      default:
+        return QrScanScreen();
+    }
+  }
+
   final List<Widget> children = [
     QrGenerateScreen(),
     QrScanScreen(),
@@ -23,20 +37,12 @@ class _BaseViewState extends State<BaseView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: children[_currentIndex],
-      bottomNavigationBar: SingleChildScrollView(
-        child: _buildCustomNavigationBar(),
-      ),
+      body: changeView(),
+      bottomNavigationBar: _buildCustomNavigationBar(),
     );
   }
 
   Widget _buildCustomNavigationBar() {
-    void onTappedBar(int index) {
-      setState(() {
-        _currentIndex = index;
-      });
-    }
-
     return CustomNavigationBar(
       iconSize: 30.0,
       selectedColor: Color(0xffFFFFFF),
@@ -63,5 +69,11 @@ class _BaseViewState extends State<BaseView> {
       currentIndex: _currentIndex,
       isFloating: true,
     );
+  }
+
+  void onTappedBar(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }

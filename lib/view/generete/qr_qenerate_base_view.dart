@@ -20,6 +20,7 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
   @override
   void initState() {
     super.initState();
+    print('deneme');
     tabController = TabController(vsync: this, initialIndex: 0, length: 4);
   }
 

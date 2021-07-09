@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
@@ -24,45 +25,35 @@ class _QrScanScreenState extends State<QrScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _buildAppBar(context),
-        backgroundColor: Color(0xff1D1F22),
         body: SingleChildScrollView(
-          child: Padding(
             padding: context.paddingMedium,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Stack(
                   alignment: Alignment.topRight,
                   children: [
                     Image.asset(
                       'assets/asa.png',
-                      height: MediaQuery.of(context).size.height * 0.4,
+                      height: context.height * 0.4,
                     ),
                   ],
                 ),
+                NormalSizedBox(),
                 _buildOutTextField(),
-                SizedBox(
-                  height: 20,
-                ),
+                NormalSizedBox(),
                 StandartButton(
                     title: 'SCAN QR',
                     onTap: () {
                       _scan();
                     }),
               ],
-            ),
-          ),
-        ));
+            )));
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      centerTitle: true,
-      elevation: 0,
       title: Text(
         'Scan QR',
-        style: TextStyle(
-            color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
       ),
       actions: [
         IconButton(
@@ -102,52 +93,49 @@ class _QrScanScreenState extends State<QrScanScreen> {
   }
 
   Widget _buildOutTextField() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 40),
-      child: TextFormField(
-        style: TextStyle(color: Colors.white),
-        controller: _outputController,
-        maxLines: 1,
-        cursorColor: Colors.white,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          suffixIcon: Column(
-            children: [
-              IconButton(
-                tooltip: 'Details',
-                icon: Icon(
-                  Icons.more_vert,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                onPressed: () async {
-                  if (_outputController.text.isNotEmpty &&
-                      _outputController.text.isNotEmpty) {
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ShowDeatilsScan(_outputController.text)));
-                  } else {
-                    showAlertDialog(context);
-                  }
-                },
-              ),
-            ],
-          ),
-          prefixIcon: Icon(
-            Icons.qr_code,
-            color: Colors.white,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          hintText: 'Your Code will be Here.',
-          hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+    return TextFormField(
+      style: TextStyle(color: Colors.white),
+      controller: _outputController,
+      maxLines: 1,
+      cursorColor: Colors.white,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
         ),
+        suffixIcon: Column(
+          children: [
+            IconButton(
+              tooltip: 'Details',
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () async {
+                if (_outputController.text.isNotEmpty &&
+                    _outputController.text.isNotEmpty) {
+                  await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ShowDeatilsScan(_outputController.text)));
+                } else {
+                  showAlertDialog(context);
+                }
+              },
+            ),
+          ],
+        ),
+        prefixIcon: Icon(
+          Icons.qr_code,
+          color: Colors.white,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        hintText: 'Your Code will be Here.',
+        hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
       ),
     );
   }

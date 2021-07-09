@@ -5,17 +5,17 @@ import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ScanPhotoDetail extends StatefulWidget {
+class ScanPhotoDetailView extends StatefulWidget {
   final result;
   final file;
 
-  ScanPhotoDetail({this.result, this.file});
+  ScanPhotoDetailView({this.result, this.file});
 
   @override
-  _ScanPhotoDetailState createState() => _ScanPhotoDetailState();
+  _ScanPhotoDetailViewState createState() => _ScanPhotoDetailViewState();
 }
 
-class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
+class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
   TextEditingController? _outputController;
 
   String link = '';
@@ -25,28 +25,12 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
-  Future _scanPath() async {
-    var a = widget.file.toString().indexOf("'");
-    var c = widget.file.toString().lastIndexOf('.') + 4;
-    var path = widget.file.toString().substring(a + 1, c);
-    print('Deneme = ' + c.toString());
-    await Permission.storage.request();
-    var barcode = await scanner.scanPath(path);
-    setState(() {
-      if (barcode != null) {
-        _outputController!.text = barcode;
-      }
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _outputController = TextEditingController();
-    _scanPath();
-    setState(() {
-      _outputController!.text = widget.result;
 
+    setState(() {
       if (_outputController!.text.startsWith(urlRegExp)) {
         link = 'Url';
       } else if (_outputController!.text.startsWith(emailRegExp)) {
@@ -60,12 +44,8 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1D1F22),
       appBar: AppBar(
-        centerTitle: true,
         title: Text('Show Details'),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: Column(
@@ -107,8 +87,7 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      if (_outputController!.text != null &&
-                          _outputController!.text != '') {
+                      if (_outputController!.text.isNotEmpty) {
                         Clipboard.setData(
                             ClipboardData(text: _outputController!.text));
                         showAlertDialog(context);
@@ -142,9 +121,8 @@ class _ScanPhotoDetailState extends State<ScanPhotoDetail> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      final RenderBox? box = context.findRenderObject() as RenderBox?;
-                      if (_outputController!.text != null &&
-                          _outputController!.text != '') {
+                      final box = context.findRenderObject() as RenderBox?;
+                      if (_outputController!.text.isNotEmpty) {
                         Share.share(_outputController!.text,
                             sharePositionOrigin:
                                 box!.localToGlobal(Offset.zero) & box.size);

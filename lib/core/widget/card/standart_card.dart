@@ -28,7 +28,7 @@ class _StandartCardState extends State<StandartCard> {
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: context.height * 0.3,
+                height: context.height * 0.2,
                 child: widget.byte.isEmpty
                     ? Center(
                         child: Text('Generate QR',
@@ -72,14 +72,9 @@ class _StandartCardState extends State<StandartCard> {
             await Permission.storage.request();
             try {
               var result = await ImageGallerySaver.saveImage(widget.byte);
-
-              //ShowAlertDialog(title: 'Great', message: 'Saved');
+              print(result);
               if (result['isSuccess']) {
-                //  ShowAlertDialog(title: 'Great', message: 'Saved')
-                //      .build(context);
-              } else {
-                // ShowAlertDialog(title: 'Error', message: 'Save failed!');
-              }
+              } else {}
             } catch (e) {
               throw Exception(e);
             }
