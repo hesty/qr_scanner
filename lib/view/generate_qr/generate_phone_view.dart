@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
@@ -65,7 +66,12 @@ class _GeneratePhoneViewState extends State<GeneratePhoneView> {
             color: Colors.white,
           ),
           onPressed: () async {
-            //TODO: Connect your contact
+            final contact = await FlutterContactPicker.pickPhoneContact();
+            if (contact.phoneNumber!.number!.isNotEmpty) {
+              setState(() {
+                _phoneTextEditingController.text = contact.phoneNumber!.number!;
+              });
+            }
           },
         ),
         hintText: '+90xxxxxxxxxx',

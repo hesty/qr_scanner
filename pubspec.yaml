@@ -14,6 +14,7 @@ dependencies:
   custom_navigation_bar: ^0.8.2
   extended_image: ^4.1.0
   flutter_icons: ^1.1.0
+  fluttercontactpicker: ^4.5.1
   gallery_saver: ^2.1.0
   google_fonts: ^2.1.0
   image_editor: ^1.0.0

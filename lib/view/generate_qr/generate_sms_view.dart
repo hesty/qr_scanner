@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
@@ -109,7 +110,13 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
             color: Colors.white,
           ),
           onPressed: () async {
-            //TODO: Connet your contact
+            final contact = await FlutterContactPicker.pickPhoneContact();
+            if (contact.phoneNumber!.number!.isNotEmpty) {
+              setState(() {
+                _numberTextEditingController.text =
+                    contact.phoneNumber!.number!;
+              });
+            }
           },
         ),
         labelText: 'Number',

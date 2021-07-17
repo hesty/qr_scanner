@@ -35,7 +35,7 @@ class CustomShowDialog {
       context: context,
       builder: (_) => CustomDialog(
         title: 'Warning',
-        titleStyle: TextStyle(color: Colors.red),
+        titleStyle: TextStyle(color: Colors.red, fontSize: 25),
         subTitle: 'Please genereate qr.',
         icon: Icon(
           Icons.warning,
