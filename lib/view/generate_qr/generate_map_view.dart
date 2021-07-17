@@ -84,40 +84,52 @@ class _GenerateMapState extends State<GenerateMap> {
       key: _formKey,
       child: Column(
         children: [
-          TextFormField(
-            keyboardType: TextInputType.phone,
-            style: TextStyle(color: Colors.white),
-            validator: (String? value) =>
-                value!.isEmpty ? 'Please enter the latitude' : null,
-            controller: _latitudeTextEditingController,
-            decoration: InputDecoration(
-              labelText: 'Latitude',
-            ),
-          ),
+          buildLatitudeTextFormField(),
           NormalSizedBox(),
-          TextFormField(
-              keyboardType: TextInputType.phone,
-              validator: (String? value) =>
-                  value!.isEmpty ? 'Please enter the longitude' : null,
-              style: TextStyle(color: Colors.white),
-              obscureText: isPasswordVisible,
-              controller: _longitudeTextEditingController,
-              decoration: InputDecoration(
-                labelText: 'Longitude',
-              )),
+          buildLongitudeTextFormField(),
           NormalSizedBox(),
-          TextFormField(
-            keyboardType: TextInputType.url,
-            validator: (String? value) =>
-                value!.isEmpty ? 'Please enter the query parameter' : null,
-            style: TextStyle(color: Colors.white),
-            obscureText: isPasswordVisible,
-            controller: _queryTextEditingController,
-            decoration: InputDecoration(
-              labelText: 'Query',
-            ),
-          ),
+          buildQueryTextFormField(),
         ],
+      ),
+    );
+  }
+
+  Widget buildQueryTextFormField() {
+    return TextFormField(
+      keyboardType: TextInputType.url,
+      validator: (String? value) =>
+          value!.isEmpty ? 'Please enter the query parameter' : null,
+      style: TextStyle(color: Colors.white),
+      obscureText: isPasswordVisible,
+      controller: _queryTextEditingController,
+      decoration: InputDecoration(
+        labelText: 'Query',
+      ),
+    );
+  }
+
+  Widget buildLongitudeTextFormField() {
+    return TextFormField(
+        keyboardType: TextInputType.phone,
+        validator: (String? value) =>
+            value!.isEmpty ? 'Please enter the longitude' : null,
+        style: TextStyle(color: Colors.white),
+        obscureText: isPasswordVisible,
+        controller: _longitudeTextEditingController,
+        decoration: InputDecoration(
+          labelText: 'Longitude',
+        ));
+  }
+
+  Widget buildLatitudeTextFormField() {
+    return TextFormField(
+      keyboardType: TextInputType.phone,
+      style: TextStyle(color: Colors.white),
+      validator: (String? value) =>
+          value!.isEmpty ? 'Please enter the latitude' : null,
+      controller: _latitudeTextEditingController,
+      decoration: InputDecoration(
+        labelText: 'Latitude',
       ),
     );
   }

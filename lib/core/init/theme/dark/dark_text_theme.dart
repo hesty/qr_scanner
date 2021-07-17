@@ -10,7 +10,5 @@ class DarkTextTheme {
   DarkTextTheme._init();
 
   final TextStyle appBarTextTheme =
-      TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold);
-
-      
+      TextStyle(color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold);
 }

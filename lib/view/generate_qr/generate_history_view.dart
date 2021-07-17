@@ -22,8 +22,7 @@ class _GenerateHistoryState extends State<GenerateHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1D1F22),
-      appBar: AppBar(title: Text('Generete History')),
+      appBar: AppBar(title: Text('Generate History')),
       body: ListView.builder(
         itemCount: allHistory.length,
         itemBuilder: (context, index) {
@@ -90,7 +89,7 @@ class _GenerateHistoryState extends State<GenerateHistory> {
   }
 
   void getHistory() async {
-    final getHistoryList = await _databaseHelper.getGenereteHistory();
+    final getHistoryList = await _databaseHelper.getgeneretaHistory();
     setState(() {
       allHistory = getHistoryList;
     });

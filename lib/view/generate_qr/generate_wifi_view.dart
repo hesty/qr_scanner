@@ -31,7 +31,6 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1D1F22),
       appBar: buildAppBar(),
       body: SingleChildScrollView(
         padding: context.paddingMedium,
@@ -84,37 +83,45 @@ class _GenerateWifiQrState extends State<GenerateWifiQr> {
   Widget _buildTextFormFields() {
     return Column(
       children: [
-        TextFormField(
-          style: TextStyle(color: Colors.white),
-          controller: _nameTextEdittingController,
-          decoration: InputDecoration(
-            hintText: 'Wi-Fi Name',
-            labelText: 'Name',
-          ),
-        ),
+        buildWifiNameTextFormField(),
         NormalSizedBox(),
-        TextFormField(
-          textInputAction: TextInputAction.go,
-          cursorColor: Colors.white,
-          style: TextStyle(color: Colors.white),
-          obscureText: isPasswordVisible,
-          controller: _passwordTextEdittingController,
-          decoration: InputDecoration(
-            suffixIcon: IconButton(
-              icon: isPasswordVisible
-                  ? Icon(
-                      Icons.visibility_off,
-                      color: Colors.white,
-                    )
-                  : Icon(Icons.visibility, color: Colors.white),
-              onPressed: () =>
-                  setState(() => isPasswordVisible = !isPasswordVisible),
-            ),
-            hintText: 'Wi-Fi Password',
-            labelText: 'Password',
-          ),
-        ),
+        buildWifiPassTextFormField(),
       ],
+    );
+  }
+
+  Widget buildWifiPassTextFormField() {
+    return TextFormField(
+      textInputAction: TextInputAction.go,
+      cursorColor: Colors.white,
+      style: TextStyle(color: Colors.white),
+      obscureText: isPasswordVisible,
+      controller: _passwordTextEdittingController,
+      decoration: InputDecoration(
+        suffixIcon: IconButton(
+          icon: isPasswordVisible
+              ? Icon(
+                  Icons.visibility_off,
+                  color: Colors.white,
+                )
+              : Icon(Icons.visibility, color: Colors.white),
+          onPressed: () =>
+              setState(() => isPasswordVisible = !isPasswordVisible),
+        ),
+        hintText: 'Wi-Fi Password',
+        labelText: 'Password',
+      ),
+    );
+  }
+
+  Widget buildWifiNameTextFormField() {
+    return TextFormField(
+      style: TextStyle(color: Colors.white),
+      controller: _nameTextEdittingController,
+      decoration: InputDecoration(
+        hintText: 'Wi-Fi Name',
+        labelText: 'Name',
+      ),
     );
   }
 }

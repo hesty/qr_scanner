@@ -36,22 +36,18 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
         appBar: AppBar(
           title: Text('Sms'),
         ),
-        body: _buildBody());
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      padding: context.paddingMedium,
-      child: Column(
-        children: [
-          StandartCard(byte: bytes),
-          NormalSizedBox(),
-          _buildTextFields(),
-          NormalSizedBox(),
-          _buildStandartButton()
-        ],
-      ),
-    );
+        body: SingleChildScrollView(
+          padding: context.paddingMedium,
+          child: Column(
+            children: [
+              StandartCard(byte: bytes),
+              NormalSizedBox(),
+              _buildTextFields(),
+              NormalSizedBox(),
+              _buildStandartButton()
+            ],
+          ),
+        ));
   }
 
   Widget _buildStandartButton() {
@@ -76,39 +72,47 @@ class _GenerateSmsQrState extends State<GenerateSmsQr> {
       key: _formKey,
       child: Column(
         children: [
-          TextFormField(
-            keyboardType: TextInputType.phone,
-            style: TextStyle(color: Colors.white),
-            validator: (String? value) =>
-                value!.isEmpty ? 'Please enter the number' : null,
-            controller: _numberTextEditingController,
-            decoration: InputDecoration(
-              suffixIcon: IconButton(
-                tooltip: 'Paste From Contact',
-                icon: Icon(
-                  Icons.person_add,
-                  color: Colors.white,
-                ),
-                onPressed: () async {
-                  //TODO: Connet your contact
-                },
-              ),
-              labelText: 'Number',
-            ),
-          ),
+          buildNumberTextFormField(),
           NormalSizedBox(),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            validator: (String? value) =>
-                value!.isEmpty ? 'Please enter the body' : null,
-            maxLines: 5,
-            style: TextStyle(color: Colors.white),
-            controller: _bodyTextEditingController,
-            decoration: InputDecoration(
-              labelText: 'Body',
-            ),
-          ),
+          buildBodyTextFormField(),
         ],
+      ),
+    );
+  }
+
+  Widget buildBodyTextFormField() {
+    return TextFormField(
+      keyboardType: TextInputType.text,
+      validator: (String? value) =>
+          value!.isEmpty ? 'Please enter the body' : null,
+      maxLines: 5,
+      style: TextStyle(color: Colors.white),
+      controller: _bodyTextEditingController,
+      decoration: InputDecoration(
+        labelText: 'Body',
+      ),
+    );
+  }
+
+  Widget buildNumberTextFormField() {
+    return TextFormField(
+      keyboardType: TextInputType.phone,
+      style: TextStyle(color: Colors.white),
+      validator: (String? value) =>
+          value!.isEmpty ? 'Please enter the number' : null,
+      controller: _numberTextEditingController,
+      decoration: InputDecoration(
+        suffixIcon: IconButton(
+          tooltip: 'Paste From Contact',
+          icon: Icon(
+            Icons.person_add,
+            color: Colors.white,
+          ),
+          onPressed: () async {
+            //TODO: Connet your contact
+          },
+        ),
+        labelText: 'Number',
       ),
     );
   }

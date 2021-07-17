@@ -75,7 +75,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
     );
   }
 
-  Future _scan() async {
+  Future<void> _scan() async {
     await Permission.camera.request();
     barcode = await scanner.scan();
     if (barcode == null) {
@@ -120,7 +120,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                           builder: (context) =>
                               ShowDeatilsScan(_outputController.text)));
                 } else {
-                  showAlertDialog(context);
+                  //showAlertDialog(context);
                 }
               },
             ),
@@ -134,30 +134,9 @@ class _QrScanScreenState extends State<QrScanScreen> {
           borderSide: BorderSide(color: Colors.white),
           borderRadius: BorderRadius.circular(5),
         ),
-        hintText: 'Your Code will be Here.',
+        hintText: 'Result will be here.',
         hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
       ),
-    );
-  }
-
-  void showAlertDialog(BuildContext context) {
-    // set up the button
-    Widget okButton = Text('OK');
-
-    // set up the AlertDialog
-    var alert = AlertDialog(
-      title: Text('Scan'),
-      content: Text('Scan QR And Be HAPPY'),
-      actions: [
-        okButton,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
     );
   }
 }

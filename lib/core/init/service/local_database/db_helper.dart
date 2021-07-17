@@ -28,7 +28,7 @@ class DatabaseHelper {
         'Create table $_generateTable($_columnID integer primary key,$_columnType text,$_columnText text,$_columnPhoto blob)');
   }
 
-  Future<List<GenerateHistoryModel>> getGenereteHistory() async {
+  Future<List<GenerateHistoryModel>> getgeneretaHistory() async {
     var db = await database;
     var result = await db!.query('$_generateTable');
     return List.generate(result.length, (i) {

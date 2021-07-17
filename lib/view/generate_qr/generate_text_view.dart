@@ -28,7 +28,18 @@ class _GenerateTextViewState extends State<GenerateTextView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildBody(),
+      body: SingleChildScrollView(
+        padding: context.paddingMedium,
+        child: Column(
+          children: [
+            StandartCard(byte: bytes),
+            NormalSizedBox(),
+            _buildInputTextFormField(),
+            NormalSizedBox(),
+            _buildGenerateButton(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -40,21 +51,6 @@ class _GenerateTextViewState extends State<GenerateTextView> {
             await _generateBarCode(_textEditingController.text);
           }
         });
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      padding: context.paddingMedium,
-      child: Column(
-        children: [
-          StandartCard(byte: bytes),
-          NormalSizedBox(),
-          _buildInputTextFormField(),
-          NormalSizedBox(),
-          _buildGenerateButton(),
-        ],
-      ),
-    );
   }
 
   Future<void> _generateBarCode(String inputCode) async {

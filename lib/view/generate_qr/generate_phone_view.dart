@@ -32,21 +32,17 @@ class _GeneratePhoneViewState extends State<GeneratePhoneView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff1D1F22),
-      body: _buildBody(),
-    );
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      padding: context.paddingMedium,
-      child: Column(
-        children: [
-          StandartCard(byte: bytes),
-          NormalSizedBox(),
-          _buildTextField(),
-          NormalSizedBox(),
-          _buildStandartButton(),
-        ],
+      body: SingleChildScrollView(
+        padding: context.paddingMedium,
+        child: Column(
+          children: [
+            StandartCard(byte: bytes),
+            NormalSizedBox(),
+            _buildTextField(),
+            NormalSizedBox(),
+            _buildStandartButton(),
+          ],
+        ),
       ),
     );
   }

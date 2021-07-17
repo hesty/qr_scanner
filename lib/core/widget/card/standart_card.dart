@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/view/_product/widget/custom_show_dialog.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
 
 import '../../extension/context_extension.dart';
@@ -69,14 +70,17 @@ class _StandartCardState extends State<StandartCard> {
         Text('|', style: TextStyle(fontSize: 15, color: Colors.black26)),
         TextButton(
           onPressed: () async {
-            await Permission.storage.request();
-            try {
-              var result = await ImageGallerySaver.saveImage(widget.byte);
-              print(result);
-              if (result['isSuccess']) {
-              } else {}
-            } catch (e) {
-              throw Exception(e);
+            if (widget.byte.isNotEmpty) {
+              await Permission.storage.request();
+              try {
+                var result = await ImageGallerySaver.saveImage(widget.byte);
+                print(result);
+                if (result['isSuccess']) {
+                  await CustomShowDialog.showSuccesDialog(context);
+                } else {}
+              } catch (e) {
+                throw Exception(e);
+              }
             }
           },
           child: Text(
@@ -93,13 +97,18 @@ class _StandartCardState extends State<StandartCard> {
     return IconButton(
       icon: Icon(
         Icons.share,
+        color: Color(0xCE18998E),
       ),
       onPressed: () async {
-        await WcFlutterShare.share(
-            sharePopupTitle: 'share',
-            fileName: 'share.png',
-            mimeType: 'image/png',
-            bytesOfFile: widget.byte);
+        if (widget.byte.isNotEmpty) {
+          await WcFlutterShare.share(
+              sharePopupTitle: 'share',
+              fileName: 'share.png',
+              mimeType: 'image/png',
+              bytesOfFile: widget.byte);
+        } else {
+          await CustomShowDialog.showAlertCreateQr(context);
+        }
       },
     );
   }

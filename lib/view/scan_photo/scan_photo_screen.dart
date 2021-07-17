@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
@@ -23,7 +22,6 @@ class ScanPhotoScreen extends StatefulWidget {
 
 class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
   final TextEditingController _outputController = TextEditingController();
-  File? _image;
   final picker = ImagePicker();
 
   @override
@@ -36,6 +34,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
           children: [
             Image.asset(
               'assets/14.png',
+              height: context.height * 0.4,
             ),
             NormalSizedBox(),
             _buildOutputTextFormField(context),
@@ -66,6 +65,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
   Widget _buildOutputTextFormField(BuildContext context) {
     return TextFormField(
       style: TextStyle(color: Colors.white),
+      readOnly: true,
       controller: _outputController,
       maxLines: 1,
       cursorColor: Colors.white,
@@ -91,7 +91,7 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
           },
         ),
         hintMaxLines: 3,
-        hintText: 'Your Text will be Here.',
+        hintText: 'Result will be here.',
         hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
       ),
     );
@@ -104,6 +104,12 @@ class _ScanPhotoScreenState extends State<ScanPhotoScreen> {
       var bytes = file.readAsBytes();
       var barcode = await scanner.scanBytes(await bytes);
       _outputController.text = barcode;
+      await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ScanPhotoDetailView(
+                    result: barcode,
+                  )));
     } catch (e) {
       throw Exception(e);
     }

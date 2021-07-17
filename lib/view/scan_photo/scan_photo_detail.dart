@@ -1,42 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:qr_scanner/core/constants/regexp_constants.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qr_scanner/core/extension/context_extension.dart';
 
 class ScanPhotoDetailView extends StatefulWidget {
-  final result;
-  final file;
+  final String result;
 
-  ScanPhotoDetailView({this.result, this.file});
+  ScanPhotoDetailView({required this.result});
 
   @override
   _ScanPhotoDetailViewState createState() => _ScanPhotoDetailViewState();
 }
 
 class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
-  TextEditingController? _outputController;
+  final TextEditingController _outputController = TextEditingController();
 
   String link = '';
-  final urlRegExp = RegExp(
-      r'((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?');
-  final emailRegExp = RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-
-  final telNumberRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
 
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      if (_outputController!.text.startsWith(urlRegExp)) {
+      _outputController.text = widget.result;
+
+      if (_outputController.text
+          .startsWith(RegexpConstans.instance.urlRegExp)) {
         link = 'Url';
-      } else if (_outputController!.text.startsWith(emailRegExp)) {
+      } else if (_outputController.text
+          .startsWith(RegexpConstans.instance.emailRegExp)) {
         link = 'E-Mail';
-      } else if (_outputController!.text.startsWith(telNumberRegExp)) {
+      } else if (_outputController.text
+          .startsWith(RegexpConstans.instance.telNumberRegExp)) {
         link = 'Telephone Number';
+      } else {
+        link = 'Text';
       }
     });
   }
@@ -51,7 +51,7 @@ class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: context.paddingMedium,
               child: TextFormField(
                 style: TextStyle(color: Colors.white),
                 controller: _outputController,
@@ -87,10 +87,10 @@ class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      if (_outputController!.text.isNotEmpty) {
+                      if (_outputController.text.isNotEmpty) {
                         Clipboard.setData(
-                            ClipboardData(text: _outputController!.text));
-                        showAlertDialog(context);
+                            ClipboardData(text: _outputController.text));
+                        // showAlertDialog(context);
                       }
                     },
                     child: Center(
@@ -122,8 +122,8 @@ class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
                   child: InkWell(
                     onTap: () {
                       final box = context.findRenderObject() as RenderBox?;
-                      if (_outputController!.text.isNotEmpty) {
-                        Share.share(_outputController!.text,
+                      if (_outputController.text.isNotEmpty) {
+                        Share.share(_outputController.text,
                             sharePositionOrigin:
                                 box!.localToGlobal(Offset.zero) & box.size);
                       }
@@ -161,7 +161,7 @@ class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      launch(_outputController!.text);
+                      launch(_outputController.text);
                     },
                     child: Center(
                         child: Row(
@@ -194,7 +194,7 @@ class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
                   child: InkWell(
                     onTap: () {
                       launch('https://www.google.com/search?q=' +
-                          _outputController!.text);
+                          _outputController.text);
                     },
                     child: Center(
                         child: Row(
@@ -219,34 +219,6 @@ class _ScanPhotoDetailViewState extends State<ScanPhotoDetailView> {
           ],
         ),
       ),
-    );
-  }
-
-  // ignore: always_declare_return_types
-  showAlertDialog(BuildContext context) {
-    // set up the button
-    Widget okButton = FlatButton(
-      child: Text('OK'),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    // set up the AlertDialog
-    var alert = AlertDialog(
-      title: Text('Great'),
-      content: Text('Copied to Clipboard'),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
     );
   }
 }

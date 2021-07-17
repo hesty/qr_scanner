@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  auto_size_text: ^3.0.0-nullsafety.0
   custom_navigation_bar: ^0.8.2
   extended_image: ^4.1.0
   flutter_icons: ^1.1.0

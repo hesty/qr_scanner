@@ -147,11 +147,10 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    if (_outputController!.text != null &&
-                        _outputController!.text != '') {
+                    if (_outputController!.text.isNotEmpty) {
                       Clipboard.setData(
                           ClipboardData(text: _outputController!.text));
-                      showAlertDialog(context);
+                      //showAlertDialog(context);
                     }
                   },
                   child: Center(
@@ -182,10 +181,8 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    final RenderBox? box =
-                        context.findRenderObject() as RenderBox?;
-                    if (_outputController!.text != null &&
-                        _outputController!.text != '') {
+                    final box = context.findRenderObject() as RenderBox?;
+                    if (_outputController!.text.isNotEmpty) {
                       Share.share(_outputController!.text,
                           sharePositionOrigin:
                               box!.localToGlobal(Offset.zero) & box.size);
@@ -284,34 +281,6 @@ class _ShowDeatilsScanState extends State<ShowDeatilsScan> {
           ),
         ],
       ),
-    );
-  }
-
-  // ignore: always_declare_return_types
-  showAlertDialog(BuildContext context) {
-    // set up the button
-    Widget okButton = FlatButton(
-      child: Text('OK'),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    // set up the AlertDialog
-    var alert = AlertDialog(
-      title: Text('Great'),
-      content: Text('Copied to Clipboard'),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
     );
   }
 }

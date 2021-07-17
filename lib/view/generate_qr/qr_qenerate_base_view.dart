@@ -4,7 +4,7 @@ import 'generate_history_view.dart';
 import 'generate_more_view.dart';
 import 'generate_phone_view.dart';
 import 'generate_text_view.dart';
-import 'generete_url_view.dart';
+import 'generate_url_view.dart';
 
 class QrGenerateScreen extends StatefulWidget {
   QrGenerateScreen({key}) : super(key: key);
@@ -20,7 +20,6 @@ class _QrGenerateScreenState extends State<QrGenerateScreen>
   @override
   void initState() {
     super.initState();
-    print('deneme');
     tabController = TabController(vsync: this, initialIndex: 0, length: 4);
   }
 

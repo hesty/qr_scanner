@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_scanner/view/_product/widget/normal_sized_box.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import '../../core/extension/context_extension.dart';
@@ -28,32 +29,23 @@ class _GenerateUrlViewState extends State<GenerateUrlView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildBody(),
-    );
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
+        body: SingleChildScrollView(
       padding: context.paddingMedium,
       child: Column(
         children: [
           StandartCard(
             byte: bytes,
           ),
-          SizedBox(
-            height: 16,
-          ),
-          _buildTextField(),
-          SizedBox(
-            height: 16,
-          ),
+          NormalSizedBox(),
+          _buildUrlTextFormField(),
+          NormalSizedBox(),
           _buildGenerateButton(),
         ],
       ),
-    );
+    ));
   }
 
-  Widget _buildTextField() {
+  Widget _buildUrlTextFormField() {
     return TextFormField(
       style: TextStyle(color: Colors.white),
       controller: _urlTextEditingController,
